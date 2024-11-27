@@ -44,7 +44,7 @@ export default class GroupingConcept {
     return { msg: "Account added to group successfully!" };
   }
 
-  async removeFromGroup(group: ObjectId, item: ObjectId) {
+  async removeItem(group: ObjectId, item: ObjectId) {
     const groupDoc = await this.groups.readOne({ _id: group });
     if (groupDoc == null) {
       throw new NotFoundError("Group not found!");
@@ -106,5 +106,18 @@ export default class GroupingConcept {
     }
 
     return groupDoc.items;
+  }
+
+  async getGroup(admin: ObjectId, name: string) {
+    const groupDoc = await this.groups.readOne({ name });
+    if (groupDoc == null) {
+      throw new NotFoundError("Group not found!");
+    }
+
+    if (!groupDoc.admins.has(admin)) {
+      throw new NotAllowedError("User is not an admin of this group!");
+    }
+
+    return groupDoc;
   }
 }
