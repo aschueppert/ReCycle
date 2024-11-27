@@ -60,6 +60,12 @@ class Routes {
   @Router.post("/login")
   async logIn(session: SessionDoc, username: string, password: string) {
     const u = await Authing.authenticate(username, password);
+
+    // TODO: update user daily streaks here
+    // const lastOnline = await Authing.getLastOnline(u._id);
+
+    await Authing.updateLastOnline(u._id);
+
     Sessioning.start(session, u._id);
     return { msg: "Logged in!" };
   }
