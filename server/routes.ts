@@ -169,7 +169,6 @@ class Routes {
     console.log("classify");
     const user = Sessioning.getUser(session);
     await Points.increase(user, 4);
-    await Streaks.increase(user, 1);
     await Seeds.increase(user, 4);
     return { msg: "Classified!" };
   }

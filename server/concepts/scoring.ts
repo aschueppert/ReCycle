@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 
 import DocCollection, { BaseDoc } from "../framework/doc";
+import { NotAllowedError } from "./errors";
 
 export interface ScoringDoc extends BaseDoc {
   item: ObjectId;
@@ -45,10 +46,14 @@ export default class ScoringConcept {
   async decrease(item: ObjectId, decrease: number) {
     const score = await this.scores.readOne({ item });
     if (!score) {
-      throw new Error("Score not found!");
+      throw new NotAllowedError("Score not found!");
     }
+
     console.log(score);
     let current_value = score.value;
+    if (current_value < decrease) {
+      throw new NotAllowedError("Score too small");
+    }
     let value = current_value - decrease;
     await this.scores.partialUpdateOne({ item }, { value });
     return { msg: "Score successfully updated!" };

@@ -3,39 +3,45 @@ import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
+
+// Accessing the isLoggedIn state from the store
 const { isLoggedIn } = storeToRefs(useUserStore());
 
+// Reactive states
 const loaded = ref(false);
-let scores = ref<Array<Record<string, string>>>([]);
+const scores = ref<{ points: { value: number }; seeds: { value: number }; streaks: { value: number } } | null>(null);
 
+// Fetch the scores data
 async function getScores() {
-  let scoreResults;
   try {
-    scoreResults = await fetchy(`/api/scores`, "GET", {});
+    const scoreResults = await fetchy(`/api/scores`, "GET", {});
+    scores.value = scoreResults; // Assign the response to scores
   } catch (_) {
-    return;
+    scores.value = null; // Handle errors by resetting scores
   }
-  scores.value = scoreResults;
 }
 
+// Trigger an action to buy a plant
 async function buyPlant() {
   try {
     await fetchy(`/api/purchase`, "POST", {});
+    await getScores(); // Refresh the scores after buying a plant
   } catch (_) {
-    return;
+    // Error handling
   }
-  getScores();
 }
 
+// Trigger an action to classify
 async function classify() {
   try {
     await fetchy(`/api/classify`, "POST", {});
+    await getScores(); // Refresh the scores after classifying
   } catch (_) {
-    return;
+    // Error handling
   }
-  getScores();
 }
 
+// Fetch scores when the component mounts
 onBeforeMount(async () => {
   await getScores();
   loaded.value = true;
@@ -44,8 +50,10 @@ onBeforeMount(async () => {
 
 <template>
   <section v-if="isLoggedIn">
-    <article v-for="score in scores" :key="score._id">
-      <p>{{ score.value }}</p>
+    <article v-if="scores">
+      <p>Points: {{ scores.points.value }}</p>
+      <p>Seeds: {{ scores.seeds.value }}</p>
+      <p>Streaks: {{ scores.streaks.value }}</p>
     </article>
     <button @click="buyPlant">Buy Plant</button>
     <button @click="classify">Classify</button>
@@ -55,7 +63,12 @@ onBeforeMount(async () => {
 <style scoped>
 section {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 1em;
+  margin: 5em;
+}
+
+button {
+  margin-top: 1em;
 }
 </style>
