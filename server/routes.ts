@@ -164,18 +164,27 @@ class Routes {
     const fromOid = (await Authing.getUserByUsername(from))._id;
     return await Friending.rejectRequest(fromOid, user);
   }
-  @Router.post("/classifying")
+  @Router.post("/classify")
   async classify(session: SessionDoc) {
+    console.log("classify");
     const user = Sessioning.getUser(session);
     await Points.increase(user, 4);
     await Streaks.increase(user, 1);
     await Seeds.increase(user, 4);
     return { msg: "Classified!" };
   }
-  @Router.post("/cosmetics")
+  @Router.get("/scores")
+  async getScores(session: SessionDoc) {
+    const user = Sessioning.getUser(session);
+    const points = await Points.getValue(user);
+    const seeds = await Seeds.getValue(user);
+    const streaks = await Streaks.getValue(user);
+    return { points: points, seeds: seeds, streaks: streaks };
+  }
+  @Router.post("/purchase")
   async purchase(session: SessionDoc) {
     const user = Sessioning.getUser(session);
-    await Seeds.decrease(user, 10);
+    await Seeds.decrease(user, 2);
     return { msg: "Purchased!" };
   }
 }

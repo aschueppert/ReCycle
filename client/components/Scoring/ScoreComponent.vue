@@ -6,83 +6,56 @@ import { onBeforeMount, ref } from "vue";
 const { isLoggedIn } = storeToRefs(useUserStore());
 
 const loaded = ref(false);
-let posts = ref<Array<Record<string, string>>>([]);
-let editing = ref("");
-let searchAuthor = ref("");
+let scores = ref<Array<Record<string, string>>>([]);
 
-async function getScores(user: string) {
-  let query: Record<string, string> = user !== undefined ? { author } : {};
-  let postResults;
+async function getScores() {
+  let scoreResults;
   try {
-    postResults = await fetchy("/api/posts", "GET", { query });
+    scoreResults = await fetchy(`/api/scores`, "GET", {});
   } catch (_) {
     return;
   }
-  searchAuthor.value = author ? author : "";
-  posts.value = postResults;
+  scores.value = scoreResults;
 }
 
-function updateEditing(id: string) {
-  editing.value = id;
+async function buyPlant() {
+  try {
+    await fetchy(`/api/purchase`, "POST", {});
+  } catch (_) {
+    return;
+  }
+  getScores();
+}
+
+async function classify() {
+  try {
+    await fetchy(`/api/classify`, "POST", {});
+  } catch (_) {
+    return;
+  }
+  getScores();
 }
 
 onBeforeMount(async () => {
-  await getPosts();
+  await getScores();
   loaded.value = true;
 });
 </script>
 
 <template>
   <section v-if="isLoggedIn">
-    <h2>Create a post:</h2>
-    <CreatePostForm @refreshPosts="getPosts" />
-  </section>
-  <div class="row">
-    <h2 v-if="!searchAuthor">Posts:</h2>
-    <h2 v-else>Posts by {{ searchAuthor }}:</h2>
-    <SearchPostForm @getPostsByAuthor="getPosts" />
-  </div>
-  <section class="posts" v-if="loaded && posts.length !== 0">
-    <article v-for="post in posts" :key="post._id">
-      <PostComponent v-if="editing !== post._id" :post="post" @refreshPosts="getPosts" @editPost="updateEditing" />
-      <EditPostForm v-else :post="post" @refreshPosts="getPosts" @editPost="updateEditing" />
+    <article v-for="score in scores" :key="score._id">
+      <p>{{ score.value }}</p>
     </article>
+    <button @click="buyPlant">Buy Plant</button>
+    <button @click="classify">Classify</button>
   </section>
-  <p v-else-if="loaded">No posts found</p>
-  <p v-else>Loading...</p>
 </template>
 
 <style scoped>
 section {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 1em;
-}
-
-section,
-p,
-.row {
-  margin: 0 auto;
-  max-width: 60em;
-}
-
-article {
-  background-color: var(--base-bg);
-  border-radius: 1em;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  padding: 1em;
-}
-
-.posts {
-  padding: 1em;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  margin: 0 auto;
-  max-width: 60em;
 }
 </style>

@@ -30,15 +30,27 @@ export default class ScoringConcept {
     return await this.scores.readOne({ item });
   }
 
-  async increase(item: ObjectId, value: number) {
-    const id = this.scores.readOne({ item });
-    await this.scores.partialUpdateOne({ id }, { value });
+  async increase(item: ObjectId, increase: number) {
+    const score = await this.scores.readOne({ item });
+    if (!score) {
+      throw new Error("Score not found!");
+    }
+    console.log(score);
+    let current_value = score.value;
+    let value = current_value + increase;
+    await this.scores.partialUpdateOne({ item }, { value });
     return { msg: "Score successfully updated!" };
   }
 
-  async decrease(item: ObjectId, value: number) {
-    const id = this.scores.readOne({ item });
-    await this.scores.partialUpdateOne({ id }, { value });
+  async decrease(item: ObjectId, decrease: number) {
+    const score = await this.scores.readOne({ item });
+    if (!score) {
+      throw new Error("Score not found!");
+    }
+    console.log(score);
+    let current_value = score.value;
+    let value = current_value - decrease;
+    await this.scores.partialUpdateOne({ item }, { value });
     return { msg: "Score successfully updated!" };
   }
 
