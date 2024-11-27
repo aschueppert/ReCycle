@@ -5,6 +5,7 @@ import { BadValuesError, NotAllowedError, NotFoundError } from "./errors";
 export interface UserDoc extends BaseDoc {
   username: string;
   password: string;
+  lastOnline: number; // Epoch Unix Timestamp (milliseconds)
 }
 
 /**
@@ -24,8 +25,9 @@ export default class AuthenticatingConcept {
   }
 
   async create(username: string, password: string) {
+    const lastOnline = new Date().getTime();
     await this.assertGoodCredentials(username, password);
-    const _id = await this.users.createOne({ username, password });
+    const _id = await this.users.createOne({ username, password, lastOnline });
     return { msg: "User created successfully!", user: await this.users.readOne({ _id }) };
   }
 
@@ -64,6 +66,20 @@ export default class AuthenticatingConcept {
     const filter = username ? { username } : {};
     const users = (await this.users.readMany(filter)).map(this.redactPassword);
     return users;
+  }
+
+  async getLastOnline(_id: ObjectId) {
+    const user = await this.users.readOne({ _id });
+    if (!user) {
+      throw new NotFoundError(`User not found!`);
+    }
+    return user.lastOnline;
+  }
+
+  async updateLastOnline(_id: ObjectId) {
+    const lastOnline = new Date().getTime();
+    await this.users.partialUpdateOne({ _id }, { lastOnline });
+    return { msg: "Last online updated successfully!" };
   }
 
   async authenticate(username: string, password: string) {
