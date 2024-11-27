@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Authing, Friending, Posting, Sessioning } from "./app";
+import { Authing, Friending, Points, Posting, Seeds, Sessioning, Streaks } from "./app";
 import { PostOptions } from "./concepts/posting";
 import { SessionDoc } from "./concepts/sessioning";
 import Responses from "./responses";
@@ -35,7 +35,13 @@ class Routes {
   @Router.post("/users")
   async createUser(session: SessionDoc, username: string, password: string) {
     Sessioning.isLoggedOut(session);
-    return await Authing.create(username, password);
+    let user = await Authing.create(username, password);
+    if (user.user) {
+      Streaks.create(user.user._id);
+      Seeds.create(user.user._id);
+      Points.create(user.user._id);
+    }
+    return user;
   }
 
   @Router.patch("/users/username")
@@ -151,6 +157,20 @@ class Routes {
     const user = Sessioning.getUser(session);
     const fromOid = (await Authing.getUserByUsername(from))._id;
     return await Friending.rejectRequest(fromOid, user);
+  }
+  @Router.post("/classifying")
+  async classify(session: SessionDoc) {
+    const user = Sessioning.getUser(session);
+    await Points.increase(user, 4);
+    await Streaks.increase(user, 1);
+    await Seeds.increase(user, 4);
+    return { msg: "Classified!" };
+  }
+  @Router.post("/cosmetics")
+  async purchase(session: SessionDoc) {
+    const user = Sessioning.getUser(session);
+    await Seeds.decrease(user, 10);
+    return { msg: "Purchased!" };
   }
 }
 
