@@ -27,7 +27,8 @@ export default class LocatingConcept {
   }
 
   async changeLocation(user: ObjectId, lat: number, long: number, location: ObjectId) {
-    return await this.locations.partialUpdateOne({ _id: location, user }, { lat, long });
+    await this.locations.partialUpdateOne({ _id: location, user }, { lat, long });
+    return { msg: "Location successfully updated!", location: await this.locations.readOne({ _id: location }) };
   }
 
   async getNearestLocation(lat: number, long: number, item: string) {

@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Authing, Friending, Points, Posting, Seeds, Sessioning, Streaks } from "./app";
+import { Authing, BadgeGrouping, BinLocating, ClubGrouping, CosmeticGrouping, CosmeticLocating, Friending, Points, Posting, Seeds, Sessioning, Streaks } from "./app";
 import { PostOptions } from "./concepts/posting";
 import { SessionDoc } from "./concepts/sessioning";
 import Responses from "./responses";
@@ -35,11 +35,15 @@ class Routes {
   @Router.post("/users")
   async createUser(session: SessionDoc, username: string, password: string) {
     Sessioning.isLoggedOut(session);
-    let user = await Authing.create(username, password);
+    const user = await Authing.create(username, password);
     if (user.user) {
-      Streaks.create(user.user._id);
-      Seeds.create(user.user._id);
-      Points.create(user.user._id);
+      await Promise.all([
+        BadgeGrouping.createGroup("Badges", user.user._id),
+        CosmeticGrouping.createGroup("Cosmetics", user.user._id),
+        Streaks.create(user.user._id),
+        Points.create(user.user._id),
+        Seeds.create(user.user._id),
+      ]);
     }
     return user;
   }
@@ -80,6 +84,107 @@ class Routes {
   async logOut(session: SessionDoc) {
     Sessioning.end(session);
     return { msg: "Logged out!" };
+  }
+
+  @Router.get("/bin")
+  async locateBin(session: SessionDoc, lat: number, lng: number, type: string) {
+    const user = Sessioning.getUser(session);
+    const bin = await BinLocating.getNearestLocation(lat, lng, type);
+    await Promise.all([Points.increase(user, 2), Seeds.increase(user, 2)]); //TODO: Badge
+    return bin;
+  }
+
+  @Router.post("/bin")
+  async addBin(session: SessionDoc, lat: number, lng: number, type: string[]) {
+    const user = Sessioning.getUser(session);
+    const bin = await BinLocating.createLocation(user, lat, lng, new Set(type));
+    await Promise.all([Points.increase(user, 10), Seeds.increase(user, 10)]); //TODO: Badge
+    return bin;
+  }
+
+  @Router.delete("/bin")
+  async removeBin(session: SessionDoc, location: string) {
+    const user = Sessioning.getUser(session);
+    await BinLocating.deleteLocation(user, new ObjectId(location));
+    return { msg: "Bin removed!" };
+  }
+
+  @Router.put("/bin")
+  async updateBin(session: SessionDoc, location: string, lat: number, lng: number) {
+    const user = Sessioning.getUser(session);
+    return await BinLocating.changeLocation(user, lat, lng, new ObjectId(location));
+  }
+
+  @Router.put("/cosmetics/move")
+  async moveCosmetic(session: SessionDoc, lat: number, lng: number, oldLocation: string) {
+    const user = Sessioning.getUser(session);
+    const bin = await CosmeticLocating.changeLocation(user, lat, lng, new ObjectId(oldLocation));
+    await Promise.all([Points.increase(user, 5), Seeds.increase(user, 5)]); // TODO: Badge
+    return bin;
+  }
+
+  @Router.get("/badges")
+  async viewBadges(session: SessionDoc) {
+    const user = Sessioning.getUser(session);
+    const group = await BadgeGrouping.getGroup(user, "Badges");
+    return await BadgeGrouping.getItems(user, group._id);
+  }
+
+  @Router.get("/cosmetics")
+  async viewCosmetics(session: SessionDoc) {
+    const user = Sessioning.getUser(session);
+    const group = await BadgeGrouping.getGroup(user, "Cosmetics");
+    return await BadgeGrouping.getItems(user, group._id);
+  }
+
+  @Router.get("/club")
+  async viewClubMembers(session: SessionDoc, group: string) {
+    const user = Sessioning.getUser(session);
+    const items = await ClubGrouping.getItems(user, new ObjectId(group));
+    return { msg: "Succesfully retrieved items", items };
+  }
+
+  @Router.post("/club")
+  async createClub(session: SessionDoc, name: string) {
+    const user = Sessioning.getUser(session);
+    const club = await ClubGrouping.createGroup(name, user);
+    await Promise.all([Points.increase(user, 3), Seeds.increase(user, 3)]); // TODO: Badge
+    return club;
+  }
+
+  @Router.delete("/club")
+  async deleteClub(club: string) {
+    return await ClubGrouping.deleteGroup(new ObjectId(club));
+  }
+
+  @Router.post("/club/member")
+  async addClubMember(session: SessionDoc, group: string, member: string) {
+    const user = Sessioning.getUser(session);
+    const member_id = new ObjectId(member);
+    const club = await ClubGrouping.addItem(new ObjectId(group), member_id);
+    await Promise.all([Points.increase(user, 3), Seeds.increase(user, 3), Points.increase(member_id, 3), Seeds.increase(member_id, 3)]); // TODO: Badge
+    return club;
+  }
+
+  @Router.delete("/club/member")
+  async removeClubMember(group: string, member: string) {
+    const member_id = new ObjectId(member);
+    return await ClubGrouping.removeItem(new ObjectId(group), member_id);
+  }
+
+  @Router.post("/club/admin")
+  async addClubAdmin(session: SessionDoc, group: string, admin: string) {
+    const user = Sessioning.getUser(session);
+    const admin_id = new ObjectId(admin);
+    const club = await ClubGrouping.addAdmin(user, admin_id, new ObjectId(group));
+    await Promise.all([Points.increase(user, 2), Seeds.increase(user, 2), Points.increase(admin_id, 2), Seeds.increase(admin_id, 2)]); // TODO: Badge
+    return club;
+  }
+
+  @Router.delete("/club/admin")
+  async removeClubAdmin(session: SessionDoc, group: string, admin: string) {
+    const user = Sessioning.getUser(session);
+    return await ClubGrouping.removeAdmin(user, new ObjectId(admin), new ObjectId(group));
   }
 
   @Router.get("/posts")
