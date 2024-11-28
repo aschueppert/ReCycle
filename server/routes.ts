@@ -10,6 +10,7 @@ import Responses from "./responses";
 import { z } from "zod";
 
 /**
+ *
  * Web server routes for the app. Implements synchronizations between concepts.
  */
 class Routes {
