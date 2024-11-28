@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LocatingComponent from "@/components/BInLocating/LocatingComponent.vue";
 import PostListComponent from "@/components/Post/PostListComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
@@ -16,6 +17,7 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
     </section>
     <PostListComponent />
     <ScoreComponent />
+    <LocatingComponent />
   </main>
 </template>
 

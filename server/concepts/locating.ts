@@ -5,7 +5,7 @@ export interface LocatingDoc extends BaseDoc {
   user: ObjectId;
   lat: number;
   long: number;
-  items: Set<string>;
+  items: string[];
 }
 
 /**
@@ -21,7 +21,7 @@ export default class LocatingConcept {
     this.locations = new DocCollection<LocatingDoc>(collectionName);
   }
 
-  async createLocation(user: ObjectId, lat: number, long: number, items: Set<string>) {
+  async createLocation(user: ObjectId, lat: number, long: number, items: string[]) {
     const _id = await this.locations.createOne({ user, lat, long, items });
     return { msg: "Location successfully created!", location: await this.locations.readOne({ _id }) };
   }
@@ -35,14 +35,15 @@ export default class LocatingConcept {
     const locations = await this.locations.readMany({});
 
     // use euclidean distance between currrent lat/long and each location to get the nearest
-    let nearest: { lat: number; long: number } | undefined = undefined;
+    let nearest: { lat: number; lng: number } | undefined = undefined;
     let minDistance = Infinity;
     for (const location of locations) {
-      if (location.items.has(item)) {
+      console.log("location", location);
+      if (location.items.includes(item)) {
         const distance = Math.hypot(lat - location.lat, long - location.long);
         if (distance < minDistance) {
           minDistance = distance;
-          nearest = { lat: location.lat, long: location.long };
+          nearest = { lat: location.lat, lng: location.long };
         }
       }
     }
