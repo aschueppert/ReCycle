@@ -117,14 +117,6 @@ class Routes {
     return await BinLocating.changeLocation(user, lat, lng, new ObjectId(location));
   }
 
-  @Router.put("/cosmetics/move")
-  async moveCosmetic(session: SessionDoc, lat: number, lng: number, oldLocation: string) {
-    const user = Sessioning.getUser(session);
-    const bin = await CosmeticLocating.changeLocation(user, lat, lng, new ObjectId(oldLocation));
-    await Promise.all([Points.increase(user, 5), Seeds.increase(user, 5)]); // TODO: Badge
-    return bin;
-  }
-
   @Router.get("/badges")
   async viewBadges(session: SessionDoc) {
     const user = Sessioning.getUser(session);
@@ -135,8 +127,16 @@ class Routes {
   @Router.get("/cosmetics")
   async viewCosmetics(session: SessionDoc) {
     const user = Sessioning.getUser(session);
-    const group = await BadgeGrouping.getGroup(user, "Cosmetics");
-    return await BadgeGrouping.getItems(user, group._id);
+    const group = await CosmeticGrouping.getGroup(user, "Cosmetics");
+    return await CosmeticGrouping.getItems(user, group._id);
+  }
+
+  @Router.put("/cosmetics/move")
+  async moveCosmetic(session: SessionDoc, lat: number, lng: number, oldLocation: string) {
+    const user = Sessioning.getUser(session);
+    const bin = await CosmeticLocating.changeLocation(user, lat, lng, new ObjectId(oldLocation));
+    await Promise.all([Points.increase(user, 5), Seeds.increase(user, 5)]); // TODO: Badge
+    return bin;
   }
 
   @Router.get("/club")
