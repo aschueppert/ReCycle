@@ -5,7 +5,7 @@ import { NotAllowedError, NotFoundError } from "./errors";
 
 export interface GroupDoc extends BaseDoc {
   name: string;
-  admins: Set<ObjectId>;
+  admins: ObjectId[];
   items: ObjectId[];
 }
 
@@ -23,7 +23,7 @@ export default class GroupingConcept {
   }
 
   async createGroup(name: string, admin: ObjectId) {
-    const _id = await this.groups.createOne({ name, admins: new Set([admin]), items: [] });
+    const _id = await this.groups.createOne({ name, admins: [admin], items: [] });
     return { msg: "Group successfully created!", group: await this.groups.readOne({ _id }) };
   }
 
@@ -68,11 +68,11 @@ export default class GroupingConcept {
       throw new NotFoundError("Group not found!");
     }
 
-    if (!group.admins.has(current_admin)) {
+    if (!group.admins.includes(current_admin)) {
       throw new NotAllowedError("User cannot add an admin");
     }
 
-    group.admins.add(user);
+    group.admins.push(user);
     await this.groups.partialUpdateOne({ _id: group._id }, { admins: group.admins });
     return { msg: "Admin added to group successfully!" };
   }
@@ -83,11 +83,13 @@ export default class GroupingConcept {
       throw new NotFoundError("Group not found!");
     }
 
-    if (!group.admins.has(current_admin)) {
+    if (!group.admins.includes(current_admin)) {
       throw new NotAllowedError("User cannot add an admin");
     }
 
-    if (group.admins.delete(to_delete)) {
+    const index = group.admins.indexOf(to_delete);
+    if (index !== -1) {
+      group.admins.splice(index, 1);
       await this.groups.partialUpdateOne({ _id: group._id }, { admins: group.admins });
       return { msg: "Admin deleted from group successfully!" };
     } else {
@@ -101,7 +103,7 @@ export default class GroupingConcept {
       throw new NotFoundError("Group not found!");
     }
 
-    if (!groupDoc.admins.has(admin)) {
+    if (!groupDoc.admins.includes(admin)) {
       throw new NotAllowedError("User is not an admin of this group!");
     }
 
@@ -114,7 +116,7 @@ export default class GroupingConcept {
       throw new NotFoundError("Group not found!");
     }
 
-    if (!groupDoc.admins.has(admin)) {
+    if (!groupDoc.admins.includes(admin)) {
       throw new NotAllowedError("User is not an admin of this group!");
     }
 
