@@ -64,7 +64,7 @@ class Routes {
   @Router.delete("/users")
   async deleteUser(session: SessionDoc) {
     const user = Sessioning.getUser(session);
-    await Promise.all([BadgeGrouping.deleteByAdmin(user), CosmeticGrouping.deleteByAdmin(user)]);
+    await Promise.all([BadgeGrouping.deleteByAdmin(user), CosmeticGrouping.deleteByAdmin(user), Streaks.deleteByItem(user), Points.deleteByItem(user), Seeds.deleteByItem(user)]);
     Sessioning.end(session);
     return await Authing.delete(user);
   }

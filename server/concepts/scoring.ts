@@ -37,8 +37,8 @@ export default class ScoringConcept {
       throw new Error("Score not found!");
     }
     console.log(score);
-    let current_value = score.value;
-    let value = current_value + increase;
+    const current_value = score.value;
+    const value = current_value + increase;
     await this.scores.partialUpdateOne({ item }, { value });
     return { msg: "Score successfully updated!" };
   }
@@ -50,17 +50,22 @@ export default class ScoringConcept {
     }
 
     console.log(score);
-    let current_value = score.value;
+    const current_value = score.value;
     if (current_value < decrease) {
       throw new NotAllowedError("Score too small");
     }
-    let value = current_value - decrease;
+    const value = current_value - decrease;
     await this.scores.partialUpdateOne({ item }, { value });
     return { msg: "Score successfully updated!" };
   }
 
   async delete(_id: ObjectId) {
     await this.scores.deleteOne({ _id });
+    return { msg: "Post deleted successfully!" };
+  }
+
+  async deleteByItem(item: ObjectId) {
+    await this.scores.deleteOne({ item });
     return { msg: "Post deleted successfully!" };
   }
 }
