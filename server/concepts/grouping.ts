@@ -32,6 +32,19 @@ export default class GroupingConcept {
     return { msg: "Group deleted successfully!" };
   }
 
+  async deleteByAdmin(user: ObjectId) {
+    const toDelete = await this.groups.readMany({ admins: user });
+
+    if (toDelete.length === 0) {
+      return { msg: "No groups with the user as admin found!" };
+    }
+
+    const idsToDelete = toDelete.map((group) => group._id);
+    await this.groups.deleteMany({ _id: { $in: idsToDelete } });
+
+    return { msg: `${toDelete.length} groups deleted successfully!` };
+  }
+
   async addItem(group: ObjectId, item: ObjectId) {
     const groupDoc = await this.groups.readOne({ _id: group });
     if (groupDoc == null) {
