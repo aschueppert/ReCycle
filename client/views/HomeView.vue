@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import LocatingComponent from "@/components/BInLocating/LocatingComponent.vue";
-import PostListComponent from "@/components/Post/PostListComponent.vue";
+import CameraFeed from "@/components/Camera/CameraFeed.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import ScoreComponent from "../components/Scoring/ScoreComponent.vue";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 </script>
@@ -12,12 +10,10 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
   <main>
     <h1>Home Page</h1>
     <section>
-      <h1 v-if="isLoggedIn">Welcome {{ currentUsername }}!</h1>
-      <h1 v-else>Please login!</h1>
+      <div class="min-h-screen flex items-center justify-center">
+        <CameraFeed />
+      </div>
     </section>
-    <PostListComponent />
-    <ScoreComponent />
-    <LocatingComponent />
   </main>
 </template>
 
