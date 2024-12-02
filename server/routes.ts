@@ -2,7 +2,23 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Authing, BadgeGrouping, BinLocating, ClubGrouping, CosmeticGrouping, CosmeticLocating, Friending, Notifications, Plants, Points, Posting, Seeds, Sessioning, Streaks } from "./app";
+import {
+  Authing,
+  BadgeGrouping,
+  BinLocating,
+  Classifying,
+  ClubGrouping,
+  CosmeticGrouping,
+  CosmeticLocating,
+  Friending,
+  Notifications,
+  Plants,
+  Points,
+  Posting,
+  Seeds,
+  Sessioning,
+  Streaks,
+} from "./app";
 import { PostOptions } from "./concepts/posting";
 import { SessionDoc } from "./concepts/sessioning";
 import Responses from "./responses";
@@ -155,8 +171,8 @@ class Routes {
       return { msg: "Group not found!" };
     }
 
-    let cosmetics = [];
-    for (let item of group.items) {
+    const cosmetics = [];
+    for (const item of group.items) {
       const cosmetic = await Plants.getById(item);
       cosmetics.push(cosmetic);
     }
@@ -300,14 +316,35 @@ class Routes {
     const fromOid = (await Authing.getUserByUsername(from))._id;
     return await Friending.rejectRequest(fromOid, user);
   }
+
   @Router.post("/classify")
-  async classify(session: SessionDoc) {
-    console.log("classify");
+  async classify(session: SessionDoc, item: string, type: string) {
     const user = Sessioning.getUser(session);
+    const created = await Classifying.createClassification(item, type, user);
     await Points.increase(user, 4);
     await Seeds.increase(user, 4);
-    return { msg: "Classified!" };
+    return { msg: created.msg, classification: await Responses.classification(created.classification) };
   }
+
+  @Router.get("/classify")
+  @Router.validate(z.object({ user: z.string().optional() }))
+  async getClassifications(user?: string) {
+    let classifications;
+    if (user) {
+      const id = (await Authing.getUserByUsername(user))._id;
+      classifications = await Classifying.getClassificationsByUser(id);
+    } else {
+      classifications = await Classifying.getClassifications();
+    }
+    return Responses.classifications(classifications);
+  }
+
+  @Router.delete("/classify/:id")
+  async deleteClassification(id: string) {
+    const oid = new ObjectId(id);
+    return await Classifying.deleteClassification(oid);
+  }
+
   @Router.get("/seeds")
   async getSeeds(session: SessionDoc) {
     const user = Sessioning.getUser(session);
