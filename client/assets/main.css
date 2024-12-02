@@ -30,3 +30,6 @@ a.button {
   align-items: center;
   gap: 1em;
 }
+main {
+  padding: 2em;
+}

@@ -9,6 +9,9 @@ import Responses from "./responses";
 
 import { z } from "zod";
 
+const cosmetics_ids: Record<string, ObjectId> = { flower: new ObjectId("507f191e810c19729de860ea"), clover: new ObjectId("507f191e810c19729de860ea"), tree: new ObjectId("507f191e810c19729de860ea") };
+const cosmetic_prices: Record<string, number> = { flower: 2, clover: 2, tree: 2 };
+
 /**
  *
  * Web server routes for the app. Implements synchronizations between concepts.
@@ -123,19 +126,20 @@ class Routes {
     await Promise.all([Points.increase(user, 5), Seeds.increase(user, 5)]); // TODO: Badge
     return bin;
   }
+  /*
 
   @Router.get("/badges")
   async viewBadges(session: SessionDoc) {
     const user = Sessioning.getUser(session);
     const group = await BadgeGrouping.getGroup(user, "Badges");
     return await BadgeGrouping.getItems(user, group._id);
-  }
+  }*/
 
   @Router.get("/cosmetics")
   async viewCosmetics(session: SessionDoc) {
     const user = Sessioning.getUser(session);
-    const group = await BadgeGrouping.getGroup(user, "Cosmetics");
-    return await BadgeGrouping.getItems(user, group._id);
+    const groups = await CosmeticGrouping.getGroupByAdmin(user);
+    return groups;
   }
 
   @Router.get("/club")
@@ -181,12 +185,12 @@ class Routes {
     await Promise.all([Points.increase(user, 2), Seeds.increase(user, 2), Points.increase(admin_id, 2), Seeds.increase(admin_id, 2)]); // TODO: Badge
     return club;
   }
-
+  /*
   @Router.delete("/club/admin")
   async removeClubAdmin(session: SessionDoc, group: string, admin: string) {
     const user = Sessioning.getUser(session);
     return await ClubGrouping.removeAdmin(user, new ObjectId(admin), new ObjectId(group));
-  }
+  }*/
 
   @Router.get("/posts")
   @Router.validate(z.object({ author: z.string().optional() }))
@@ -278,18 +282,26 @@ class Routes {
     await Seeds.increase(user, 4);
     return { msg: "Classified!" };
   }
-  @Router.get("/scores")
-  async getScores(session: SessionDoc) {
+  @Router.get("/seeds")
+  async getSeeds(session: SessionDoc) {
     const user = Sessioning.getUser(session);
-    const points = await Points.getValue(user);
     const seeds = await Seeds.getValue(user);
-    const streaks = await Streaks.getValue(user);
-    return { points: points, seeds: seeds, streaks: streaks };
+    return seeds;
   }
   @Router.post("/purchase")
-  async purchase(session: SessionDoc) {
+  async purchase(session: SessionDoc, item: string) {
     const user = Sessioning.getUser(session);
-    await Seeds.decrease(user, 2);
+    if (!cosmetic_prices.hasOwnProperty(item)) {
+      return { msg: "Item not found!" };
+    }
+    const price = cosmetic_prices[item];
+    const id = cosmetics_ids[item];
+    await Seeds.decrease(user, price);
+    const group = await CosmeticGrouping.getGroupByAdmin(user);
+    if (!group) {
+      return { msg: "Group not found!" };
+    }
+    await CosmeticGrouping.addItem(group._id, id);
     return { msg: "Purchased!" };
   }
 }

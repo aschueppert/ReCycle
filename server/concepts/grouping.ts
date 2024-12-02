@@ -5,7 +5,7 @@ import { NotAllowedError, NotFoundError } from "./errors";
 
 export interface GroupDoc extends BaseDoc {
   name: string;
-  admins: Set<ObjectId>;
+  admins: Array<ObjectId>;
   items: ObjectId[];
 }
 
@@ -23,13 +23,21 @@ export default class GroupingConcept {
   }
 
   async createGroup(name: string, admin: ObjectId) {
-    const _id = await this.groups.createOne({ name, admins: new Set([admin]), items: [] });
+    const admins = new Array(admin);
+    const _id = await this.groups.createOne({ name, admins, items: [] });
     return { msg: "Group successfully created!", group: await this.groups.readOne({ _id }) };
   }
 
   async deleteGroup(_id: ObjectId) {
     await this.groups.popOne({ _id });
     return { msg: "Group deleted successfully!" };
+  }
+  async getGroupByAdmin(admin: ObjectId) {
+    //find group where user is in admins
+    return await this.groups.readOne({ admins: [admin] });
+  }
+  async getGroups() {
+    return await this.groups.readMany({});
   }
 
   async addItem(group: ObjectId, item: ObjectId) {
@@ -68,22 +76,22 @@ export default class GroupingConcept {
       throw new NotFoundError("Group not found!");
     }
 
-    if (!group.admins.has(current_admin)) {
+    if (!group.admins.includes(current_admin)) {
       throw new NotAllowedError("User cannot add an admin");
     }
 
-    group.admins.add(user);
+    group.admins.push(user);
     await this.groups.partialUpdateOne({ _id: group._id }, { admins: group.admins });
     return { msg: "Admin added to group successfully!" };
   }
-
+  /*
   async removeAdmin(current_admin: ObjectId, to_delete: ObjectId, group_id: ObjectId) {
     const group = await this.groups.readOne({ _id: group_id });
     if (group == null) {
       throw new NotFoundError("Group not found!");
     }
 
-    if (!group.admins.has(current_admin)) {
+    if (!group.admins.includes(current_admin)) {
       throw new NotAllowedError("User cannot add an admin");
     }
 
@@ -93,7 +101,7 @@ export default class GroupingConcept {
     } else {
       return { msg: "Provided user is not an admin of group " + name + "!" };
     }
-  }
+  }*/
 
   async getItems(admin: ObjectId, group: ObjectId) {
     const groupDoc = await this.groups.readOne({ _id: group });
@@ -101,23 +109,10 @@ export default class GroupingConcept {
       throw new NotFoundError("Group not found!");
     }
 
-    if (!groupDoc.admins.has(admin)) {
+    if (!groupDoc.admins.includes(admin)) {
       throw new NotAllowedError("User is not an admin of this group!");
     }
 
     return groupDoc.items;
-  }
-
-  async getGroup(admin: ObjectId, name: string) {
-    const groupDoc = await this.groups.readOne({ name });
-    if (groupDoc == null) {
-      throw new NotFoundError("Group not found!");
-    }
-
-    if (!groupDoc.admins.has(admin)) {
-      throw new NotAllowedError("User is not an admin of this group!");
-    }
-
-    return groupDoc;
   }
 }
