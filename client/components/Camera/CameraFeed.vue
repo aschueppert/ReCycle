@@ -3,7 +3,7 @@ import { onBeforeUnmount, onMounted, ref } from "vue";
 
 const videoRef = ref<HTMLVideoElement | null>(null);
 const canvasRef = ref<HTMLCanvasElement | null>(null);
-const capturedImages = ref<File[]>([]);
+const classificationResult = ref<string | null>(null);
 let stream: MediaStream | null = null;
 
 const startVideo = async () => {
@@ -36,14 +36,17 @@ const drawToCanvas = () => {
   }
 };
 
-const captureImage = () => {
+const classifyImage = (image: File): string => {
+  return Math.random() > 0.5 ? "Recycle" : "Trash";
+};
+
+const handleClassify = () => {
   if (canvasRef.value) {
     canvasRef.value.toBlob(
       (blob) => {
         if (blob) {
           const file = new File([blob], `capture-${Date.now()}.jpg`, { type: "image/jpeg" });
-          capturedImages.value.push(file);
-          console.log("Image captured:", file);
+          classificationResult.value = classifyImage(file);
         }
       },
       "image/jpeg",
@@ -67,13 +70,11 @@ onBeforeUnmount(() => {
     <video ref="videoRef" style="display: none"></video>
     <canvas ref="canvasRef" width="640" height="480" style="border: 1px solid black"></canvas>
     <div style="margin-top: 10px; text-align: center">
-      <button @click="captureImage">Capture Image</button>
+      <button @click="handleClassify">Classify</button>
     </div>
-    <div v-if="capturedImages.length" style="margin-top: 20px">
-      <h3>Captured Images:</h3>
-      <ul>
-        <li v-for="(image, index) in capturedImages" :key="index">{{ image.name }} - {{ (image.size / 1024).toFixed(2) }} KB</li>
-      </ul>
+    <div v-if="classificationResult" style="margin-top: 20px; text-align: center">
+      <h3>Classification Result:</h3>
+      <p>{{ classificationResult }}</p>
     </div>
   </div>
 </template>
@@ -87,5 +88,8 @@ button {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
+}
+h3 {
+  margin-bottom: 5px;
 }
 </style>
