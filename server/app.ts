@@ -1,4 +1,5 @@
 import AuthenticatingConcept from "./concepts/authenticating";
+import ClassifyingConcept from "./concepts/classifying";
 import FriendingConcept from "./concepts/friending";
 import GroupingConcept from "./concepts/grouping";
 import ItemConcept from "./concepts/item";
@@ -23,3 +24,4 @@ export const Seeds = new ScoringConcept("seeds");
 export const Points = new ScoringConcept("points");
 export const Plants = new ItemConcept("plants");
 export const Notifications = new NotifyingConcept("notifications");
+export const Classifying = new ClassifyingConcept("classifications");

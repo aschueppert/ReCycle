@@ -1,4 +1,5 @@
 import { Authing } from "./app";
+import { ClassificationDoc } from "./concepts/classifying";
 import { AlreadyFriendsError, FriendNotFoundError, FriendRequestAlreadyExistsError, FriendRequestDoc, FriendRequestNotFoundError } from "./concepts/friending";
 import { PostAuthorNotMatchError, PostDoc } from "./concepts/posting";
 import { Router } from "./framework/router";
@@ -36,6 +37,26 @@ export default class Responses {
     const to = requests.map((request) => request.to);
     const usernames = await Authing.idsToUsernames(from.concat(to));
     return requests.map((request, i) => ({ ...request, from: usernames[i], to: usernames[i + requests.length] }));
+  }
+
+  /**
+   * Convert ClassificationDoc into more readable format for the frontend
+   * by converting the user id into a username.
+   */
+  static async classification(classification: ClassificationDoc | null) {
+    if (!classification) {
+      return classification;
+    }
+    const user = await Authing.getUserById(classification.user);
+    return { ...classification, user: user.username };
+  }
+
+  /**
+   * Same as {@link classification} but for an array of ClassificationDoc for improved performance.
+   */
+  static async classifications(classifications: ClassificationDoc[]) {
+    const users = await Authing.idsToUsernames(classifications.map((classification) => classification.user));
+    return classifications.map((classification, i) => ({ ...classification, user: users[i] }));
   }
 }
 
