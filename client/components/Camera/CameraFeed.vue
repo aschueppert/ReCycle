@@ -77,14 +77,7 @@ onBeforeUnmount(() => {
       <div class="classify-section">
         <button @click="handleClassify">Classify</button>
 
-        <div
-          v-if="classificationResult"
-          class="classification-result"
-          :class="{
-            'result-recycle': classificationResult === 'Recycle',
-            'result-trash': classificationResult === 'Trash',
-          }"
-        >
+        <div v-if="classificationResult" class="classification-result">
           <span class="result-icon">
             {{ classificationResult === "Recycle" ? "♻️" : "🗑️" }}
           </span>
@@ -102,7 +95,6 @@ onBeforeUnmount(() => {
   max-width: 700px;
   margin: 0 auto;
   padding: 20px;
-  transition: background-color 0.3s ease;
   border-radius: 10px;
 }
 
@@ -121,11 +113,10 @@ onBeforeUnmount(() => {
 }
 
 .recycle-bg {
-  background-color: #e6f3e6; /* Light green */
+  background-color: lightgreen;
 }
-
 .trash-bg {
-  background-color: #f3e6e6; /* Light red */
+  background-color: lightcoral;
 }
 
 canvas {
@@ -156,13 +147,13 @@ button {
 }
 
 .result-recycle {
-  background-color: rgba(100, 255, 100, 0.2);
-  color: dark green;
+  background-color: rgba(50, 205, 50, 0.1); /* Very subtle green */
+  color: #006400; /* Dark green text */
 }
 
 .result-trash {
-  background-color: rgba(255, 100, 100, 0.2);
-  color: dark red;
+  background-color: rgba(255, 99, 71, 0.1); /* Very subtle red */
+  color: #8b0000; /* Dark red text */
 }
 
 .result-icon {
