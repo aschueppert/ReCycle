@@ -67,6 +67,7 @@ class Routes {
   @Router.delete("/users")
   async deleteUser(session: SessionDoc) {
     const user = Sessioning.getUser(session);
+    await Promise.all([BadgeGrouping.deleteByAdmin(user), CosmeticGrouping.deleteByAdmin(user), Streaks.deleteByItem(user), Points.deleteByItem(user), Seeds.deleteByItem(user)]);
     Sessioning.end(session);
     return await Authing.delete(user);
   }
@@ -90,18 +91,18 @@ class Routes {
     return { msg: "Logged out!" };
   }
 
-  @Router.get("/bin/:lat/:lng/:type")
-  async locateBin(session: SessionDoc, lat: number, lng: number, type: string) {
+  @Router.get("/bin")
+  async locateBin(session: SessionDoc, lat: number, lng: number, item: string) {
     const user = Sessioning.getUser(session);
-    const bin = await BinLocating.getNearestLocation(lat, lng, type);
+    const bin = await BinLocating.getNearestLocation(lat, lng, item);
     await Promise.all([Points.increase(user, 2), Seeds.increase(user, 2)]); //TODO: Badge
     return bin;
   }
 
   @Router.post("/bin")
-  async addBin(session: SessionDoc, lat: number, lng: number, type: string[]) {
+  async addBin(session: SessionDoc, lat: number, lng: number, items: string[]) {
     const user = Sessioning.getUser(session);
-    const bin = await BinLocating.createLocation(user, lat, lng, type);
+    const bin = await BinLocating.createLocation(user, lat, lng, items);
     await Promise.all([Points.increase(user, 10), Seeds.increase(user, 10)]); //TODO: Badge
     return bin;
   }
