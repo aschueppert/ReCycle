@@ -8,7 +8,6 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 <template>
   <main>
-    <h1>Home Page</h1>
     <section>
       <div class="min-h-screen flex items-center justify-center">
         <CameraFeed />

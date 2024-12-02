@@ -30,6 +30,13 @@ const drawToCanvas = () => {
   if (videoRef.value && canvasRef.value) {
     const context = canvasRef.value.getContext("2d");
     if (context) {
+      // Adjust canvas to match video input while maintaining aspect ratio
+      const videoAspectRatio = videoRef.value.videoWidth / videoRef.value.videoHeight;
+      const containerWidth = canvasRef.value.parentElement?.clientWidth || window.innerWidth;
+
+      canvasRef.value.width = containerWidth;
+      canvasRef.value.height = containerWidth / videoAspectRatio;
+
       context.drawImage(videoRef.value, 0, 0, canvasRef.value.width, canvasRef.value.height);
     }
     requestAnimationFrame(drawToCanvas);
@@ -57,11 +64,13 @@ const handleClassify = () => {
 
 onMounted(() => {
   void startVideo();
+  window.addEventListener("resize", drawToCanvas);
   requestAnimationFrame(drawToCanvas);
 });
 
 onBeforeUnmount(() => {
   stopVideo();
+  window.removeEventListener("resize", drawToCanvas);
 });
 </script>
 
@@ -73,65 +82,64 @@ onBeforeUnmount(() => {
     }"
     class="container"
   >
+    <div class="classify-section">
+      <button @click="handleClassify">Classify</button>
+
+      <div
+        v-if="classificationResult"
+        class="classification-result"
+        :class="{
+          'result-recycle': classificationResult === 'Recycle',
+          'result-trash': classificationResult === 'Trash',
+        }"
+      >
+        <span class="result-icon">
+          {{ classificationResult === "Recycle" ? "♻️" : "🗑️" }}
+        </span>
+        <span class="result-text">{{ classificationResult }}</span>
+      </div>
+    </div>
+
     <div class="camera-section">
       <video ref="videoRef" style="display: none"></video>
-      <canvas ref="canvasRef" width="640" height="480" style="border: 1px solid black"></canvas>
-
-      <div class="classify-section">
-        <button @click="handleClassify">Classify</button>
-
-        <div
-          v-if="classificationResult"
-          class="classification-result"
-          :class="{
-            'result-recycle': classificationResult === 'Recycle',
-            'result-trash': classificationResult === 'Trash',
-          }"
-        >
-          <span class="result-icon">
-            {{ classificationResult === "Recycle" ? "♻️" : "🗑️" }}
-          </span>
-          <span class="result-text">{{ classificationResult }}</span>
-        </div>
-      </div>
+      <canvas ref="canvasRef" class="responsive-canvas" style="border: 1px solid black"></canvas>
     </div>
   </div>
 </template>
 
 <style scoped>
 .container {
-  max-width: 700px;
+  width: 100%;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   transition: background-color 0.3s ease;
   border-radius: 10px;
 }
 
-.camera-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .classify-section {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.camera-section {
   width: 100%;
-  margin-top: 15px;
+}
+
+.responsive-canvas {
+  width: 100%;
+  height: auto;
 }
 
 .recycle-bg {
-  background-color: #e6f3e6; /* Light green */
+  background-color: #e6f3e6;
 }
 
 .trash-bg {
-  background-color: #f3e6e6; /* Light red */
-}
-
-canvas {
-  max-width: 100%;
-  height: auto;
+  background-color: #f3e6e6;
 }
 
 button {
@@ -141,7 +149,6 @@ button {
   background-color: #f0f0f0;
   border: 1px solid #ddd;
   border-radius: 5px;
-  margin-bottom: 15px;
 }
 
 .classification-result {
@@ -149,7 +156,7 @@ button {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 15px;
+  padding: 10px;
   border-radius: 8px;
   font-size: 18px;
   font-weight: bold;
@@ -158,12 +165,12 @@ button {
 
 .result-recycle {
   background-color: rgba(100, 255, 100, 0.2);
-  color: dark green;
+  color: darkgreen;
 }
 
 .result-trash {
   background-color: rgba(255, 100, 100, 0.2);
-  color: dark red;
+  color: darkred;
 }
 
 .result-icon {
