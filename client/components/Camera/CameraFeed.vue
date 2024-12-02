@@ -66,7 +66,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div>
+  <div
+    :class="{
+      'recycle-bg': classificationResult === 'Recycle',
+      'trash-bg': classificationResult === 'Trash',
+    }"
+    class="container"
+  >
     <video ref="videoRef" style="display: none"></video>
     <canvas ref="canvasRef" width="640" height="480" style="border: 1px solid black"></canvas>
     <div style="margin-top: 10px; text-align: center">
@@ -80,15 +86,29 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.container {
+  padding: 20px;
+}
+
+.recycle-bg {
+  background-color: #5cbf76; /* Light green */
+}
+
+.trash-bg {
+  background-color: #d98282; /* Light red */
+}
+
 canvas {
   display: block;
   margin: 0 auto;
 }
+
 button {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
 }
+
 h3 {
   margin-bottom: 5px;
 }
