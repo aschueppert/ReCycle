@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Garden from "@/components/Plants/Garden.vue";
 import PlantListComponent from "@/components/Plants/PlantListComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
@@ -9,6 +10,7 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
   <main>
     <h1>Garden Store</h1>
     <PlantListComponent />
+    <Garden />
   </main>
 </template>
 

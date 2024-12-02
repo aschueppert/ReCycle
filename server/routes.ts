@@ -322,7 +322,9 @@ class Routes {
       return { msg: "Group not found!" };
     }
     await CosmeticGrouping.addItem(group._id, plant._id);
-    await CosmeticLocating.createLocation(user, 0, 0, plant.description);
+    //random number between 0 and 1
+
+    await CosmeticLocating.createLocation(user, Math.random(), Math.random(), plant.description);
     return { msg: "Purchased!" };
   }
 

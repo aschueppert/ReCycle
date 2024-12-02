@@ -10,6 +10,8 @@ const { isLoggedIn } = storeToRefs(useUserStore());
 const loaded = ref(false);
 const seeds = ref();
 const cosmetics = ref();
+const containerWidth = 600; // Width of the container
+const containerHeight = 600; // Height of the container
 // Fetch the scores data
 async function getSeeds() {
   try {
@@ -43,10 +45,9 @@ onBeforeMount(async () => {
   </head>
   <article v-if="loaded">
     <p>{{ seeds.value }} Seeds</p>
-
     <div class="icons">
-      <div v-for="item in cosmetics" :key="item">
-        <i v-if="item != null" :class="item.description"></i>
+      <div v-for="item in cosmetics" :key="item" :style="{ position: 'absolute', left: item.long * containerWidth + 'px', top: item.lat * containerHeight + 'px' }">
+        <i v-if="item != null" :class="item.item"></i>
       </div>
     </div>
   </article>
@@ -61,9 +62,10 @@ onBeforeMount(async () => {
 }
 
 .icons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5em;
+  position: relative; /* Ensure the container is the reference point */
+  width: 660px; /* Ensure it takes up the full width */
+  background-color: lightgreen;
+  height: 660px; /* Set the height of the container */
   font-size: 3em;
   color: green;
 }
