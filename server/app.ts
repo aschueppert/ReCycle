@@ -21,8 +21,5 @@ export const ClubGrouping = new GroupingConcept("clubs");
 export const Streaks = new ScoringConcept("streaks");
 export const Seeds = new ScoringConcept("seeds");
 export const Points = new ScoringConcept("points");
-<<<<<<< HEAD
 export const Plants = new ItemConcept("plants");
-=======
 export const Notifications = new NotifyingConcept("notifications");
->>>>>>> fee19812681cd96b5ab62f4c2effc5f5721c2db1
