@@ -5,7 +5,7 @@ import { NotAllowedError, NotFoundError } from "./errors";
 
 export interface GroupDoc extends BaseDoc {
   name: string;
-  admins: Array<ObjectId>;
+  admins: ObjectId[];
   items: ObjectId[];
 }
 
@@ -23,8 +23,7 @@ export default class GroupingConcept {
   }
 
   async createGroup(name: string, admin: ObjectId) {
-    const admins = new Array(admin);
-    const _id = await this.groups.createOne({ name, admins, items: [] });
+    const _id = await this.groups.createOne({ name, admins: [admin], items: [] });
     return { msg: "Group successfully created!", group: await this.groups.readOne({ _id }) };
   }
 
@@ -129,5 +128,18 @@ export default class GroupingConcept {
     }
 
     return groupDoc.items;
+  }
+
+  async getGroup(admin: ObjectId, name: string) {
+    const groupDoc = await this.groups.readOne({ name });
+    if (groupDoc == null) {
+      throw new NotFoundError("Group not found!");
+    }
+
+    if (!groupDoc.admins.includes(admin)) {
+      throw new NotAllowedError("User is not an admin of this group!");
+    }
+
+    return groupDoc;
   }
 }

@@ -3,6 +3,7 @@ import FriendingConcept from "./concepts/friending";
 import GroupingConcept from "./concepts/grouping";
 import ItemConcept from "./concepts/item";
 import LocatingConcept from "./concepts/locating";
+import NotifyingConcept from "./concepts/notifying";
 import PostingConcept from "./concepts/posting";
 import ScoringConcept from "./concepts/scoring";
 import SessioningConcept from "./concepts/sessioning";
@@ -20,4 +21,8 @@ export const ClubGrouping = new GroupingConcept("clubs");
 export const Streaks = new ScoringConcept("streaks");
 export const Seeds = new ScoringConcept("seeds");
 export const Points = new ScoringConcept("points");
+<<<<<<< HEAD
 export const Plants = new ItemConcept("plants");
+=======
+export const Notifications = new NotifyingConcept("notifications");
+>>>>>>> fee19812681cd96b5ab62f4c2effc5f5721c2db1
