@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import axios from "axios";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 
 const videoRef = ref<HTMLVideoElement | null>(null);
@@ -36,22 +37,44 @@ const drawToCanvas = () => {
   }
 };
 
-const classifyImage = (image: File): string => {
-  return Math.random() > 0.5 ? "Recycle" : "Trash";
+const classifyImage = async (image: File): Promise<string> => {
+  try {
+    const base64Image = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(image);
+    });
+
+    const base64Data = base64Image.split(",")[1];
+
+    const response = await axios.post("https://classify.roboflow.com/recycling-xqwwn/1", base64Data, {
+      params: {
+        api_key: "7kErDwvYPZAVUblhm8Ta",
+      },
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    const predictedClass = response.data?.predictions?.[0]?.class || "other";
+    return predictedClass.toLowerCase() === "other" ? "Trash" : "Recycle";
+  } catch (error) {
+    console.error("Error classifying image: ", error);
+    return "Trash";
+  }
 };
 
 const handleClassify = () => {
   if (canvasRef.value) {
-    canvasRef.value.toBlob(
-      (blob) => {
-        if (blob) {
-          const file = new File([blob], `capture-${Date.now()}.jpg`, { type: "image/jpeg" });
-          classificationResult.value = classifyImage(file);
-        }
-      },
-      "image/jpeg",
-      0.95,
-    );
+    canvasRef.value.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], `capture-${Date.now()}.jpg`, { type: "image/jpeg" });
+        void classifyImage(file).then((result) => {
+          classificationResult.value = result;
+        });
+      }
+    }, "image/jpeg");
   }
 };
 
