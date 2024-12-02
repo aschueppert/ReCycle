@@ -2,15 +2,12 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Authing, BadgeGrouping, BinLocating, ClubGrouping, CosmeticGrouping, CosmeticLocating, Friending, Points, Posting, Seeds, Sessioning, Streaks } from "./app";
+import { Authing, BadgeGrouping, BinLocating, ClubGrouping, CosmeticGrouping, CosmeticLocating, Friending, Plants, Points, Posting, Seeds, Sessioning, Streaks } from "./app";
 import { PostOptions } from "./concepts/posting";
 import { SessionDoc } from "./concepts/sessioning";
 import Responses from "./responses";
 
 import { z } from "zod";
-
-const cosmetics_ids: Record<string, ObjectId> = { flower: new ObjectId("507f191e810c19729de860ea"), clover: new ObjectId("507f191e810c19729de860ea"), tree: new ObjectId("507f191e810c19729de860ea") };
-const cosmetic_prices: Record<string, number> = { flower: 2, clover: 2, tree: 2 };
 
 /**
  *
@@ -139,10 +136,24 @@ class Routes {
   @Router.get("/cosmetics")
   async viewCosmetics(session: SessionDoc) {
     const user = Sessioning.getUser(session);
-    const groups = await CosmeticGrouping.getGroupByAdmin(user);
-    return groups;
+    const group = await CosmeticGrouping.getGroupByAdmin(user);
+    if (!group) {
+      return { msg: "Group not found!" };
+    }
+    let cosmetics = [];
+    for (let item of group.items) {
+      const cosmetic = await Plants.getById(item);
+      cosmetics.push(cosmetic);
+    }
+
+    return cosmetics;
   }
 
+  @Router.get("/allcosmetics")
+  async viewAllCosmetics() {
+    const cosmetics = await Plants.getAll();
+    return cosmetics;
+  }
   @Router.get("/club")
   async viewClubMembers(session: SessionDoc, group: string) {
     const user = Sessioning.getUser(session);
@@ -289,20 +300,21 @@ class Routes {
     const seeds = await Seeds.getValue(user);
     return seeds;
   }
+
   @Router.post("/purchase")
   async purchase(session: SessionDoc, item: string) {
     const user = Sessioning.getUser(session);
-    if (!cosmetic_prices.hasOwnProperty(item)) {
+
+    const plant = await Plants.getByName(item);
+    if (!plant) {
       return { msg: "Item not found!" };
     }
-    const price = cosmetic_prices[item];
-    const id = cosmetics_ids[item];
-    await Seeds.decrease(user, price);
+    await Seeds.decrease(user, plant.value);
     const group = await CosmeticGrouping.getGroupByAdmin(user);
     if (!group) {
       return { msg: "Group not found!" };
     }
-    await CosmeticGrouping.addItem(group._id, id);
+    await CosmeticGrouping.addItem(group._id, plant._id);
     return { msg: "Purchased!" };
   }
 }

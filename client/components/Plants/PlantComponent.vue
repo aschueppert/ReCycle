@@ -2,12 +2,11 @@
 import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
-import { onBeforeMount, ref } from "vue";
-
+import { defineEmits, defineProps, onBeforeMount, ref } from "vue";
 // Accessing the isLoggedIn state from the store
 
 const { isLoggedIn } = storeToRefs(useUserStore());
-
+const props = defineProps(["item"]);
 const emit = defineEmits(["refresh"]);
 
 // Reactive states
@@ -33,9 +32,9 @@ onBeforeMount(async () => {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   </head>
   <section v-if="loaded">
-    <p>2 Seeds</p>
-    <i class="fas fa-seedling"></i>
-    <button @click="buyPlant('flower')">grow</button>
+    <p>{{ props.item.value }} Seeds</p>
+    <i :class="props.item.description"></i>
+    <button @click="buyPlant(props.item.name)">grow</button>
   </section>
 </template>
 

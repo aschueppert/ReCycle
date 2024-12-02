@@ -7,11 +7,11 @@ import PlantComponent from "./PlantComponent.vue";
 // Accessing the isLoggedIn state from the store
 const { isLoggedIn } = storeToRefs(useUserStore());
 
-const cosmetics_ids: Record<string, string> = { "507f191e810c19729de860ea": "fas fa-seedling" };
 // Reactive states
 const loaded = ref(false);
 const seeds = ref();
 const cosmetics = ref();
+const all_cosmetics = ref();
 // Fetch the scores data
 async function getSeeds() {
   try {
@@ -26,9 +26,14 @@ async function getCosmetics() {
   try {
     const cosmeticsResults = await fetchy(`/api/cosmetics`, "GET", {});
     cosmetics.value = cosmeticsResults; // Assign the response to scores
-  } catch (_) {
-    cosmetics.value = 0; // Handle errors by resetting scores
-  }
+  } catch (_) {}
+}
+
+async function getAllCosmetics() {
+  try {
+    const all_cosmeticsResults = await fetchy(`/api/allcosmetics`, "GET", {});
+    all_cosmetics.value = all_cosmeticsResults; // Assign the response to scores
+  } catch (_) {}
 }
 async function classify() {
   try {
@@ -44,6 +49,7 @@ async function classify() {
 onBeforeMount(async () => {
   await getSeeds();
   await getCosmetics();
+  await getAllCosmetics();
   loaded.value = true;
 });
 </script>
@@ -54,10 +60,13 @@ onBeforeMount(async () => {
   </head>
   <section v-if="loaded">
     <p>{{ seeds.value }} Seeds</p>
-    <div class="plants">
-      <i v-for="item in cosmetics.items" :key="item" :class="cosmetics_ids[item]"></i>
+    <div class="icons">
+      <i v-for="item in cosmetics" :key="item" :class="item.description"></i>
     </div>
-    <PlantComponent @refresh="getCosmetics" />
+    <h1>Buy Plants</h1>
+    <div class="plants">
+      <PlantComponent v-for="item in all_cosmetics" :key="item" :item="item" @refresh="getCosmetics" />
+    </div>
     <button @click="classify">getSeeds</button>
   </section>
 </template>
@@ -68,10 +77,9 @@ onBeforeMount(async () => {
   flex-direction: row;
   flex-wrap: wrap; /* Ensures items can wrap to the next line if necessary */
   gap: 1em; /* Space between the plant items */
-  justify-content: center; /* Centers the items horizontally */
 }
 
-i {
+.icons i {
   font-size: 3em;
   color: green;
 }

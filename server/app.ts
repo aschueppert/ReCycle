@@ -1,11 +1,11 @@
 import AuthenticatingConcept from "./concepts/authenticating";
 import FriendingConcept from "./concepts/friending";
 import GroupingConcept from "./concepts/grouping";
+import ItemConcept from "./concepts/item";
 import LocatingConcept from "./concepts/locating";
 import PostingConcept from "./concepts/posting";
 import ScoringConcept from "./concepts/scoring";
 import SessioningConcept from "./concepts/sessioning";
-
 // The app is a composition of concepts instantiated here
 // and synchronized together in `routes.ts`.
 export const Sessioning = new SessioningConcept();
@@ -20,3 +20,4 @@ export const ClubGrouping = new GroupingConcept("clubs");
 export const Streaks = new ScoringConcept("streaks");
 export const Seeds = new ScoringConcept("seeds");
 export const Points = new ScoringConcept("points");
+export const Plants = new ItemConcept("plants");
