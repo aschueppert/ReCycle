@@ -2,11 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-<<<<<<< HEAD
-import { Authing, BadgeGrouping, BinLocating, ClubGrouping, CosmeticGrouping, CosmeticLocating, Friending, Plants, Points, Posting, Seeds, Sessioning, Streaks } from "./app";
-=======
-import { Authing, BadgeGrouping, BinLocating, ClubGrouping, CosmeticGrouping, CosmeticLocating, Friending, Notifications, Points, Posting, Seeds, Sessioning, Streaks } from "./app";
->>>>>>> fee19812681cd96b5ab62f4c2effc5f5721c2db1
+import { Authing, BadgeGrouping, BinLocating, ClubGrouping, CosmeticGrouping, CosmeticLocating, Friending, Notifications, Plants, Points, Posting, Seeds, Sessioning, Streaks } from "./app";
 import { PostOptions } from "./concepts/posting";
 import { SessionDoc } from "./concepts/sessioning";
 import Responses from "./responses";
@@ -144,12 +140,12 @@ class Routes {
     if (!group) {
       return { msg: "Group not found!" };
     }
+
     let cosmetics = [];
     for (let item of group.items) {
       const cosmetic = await Plants.getById(item);
       cosmetics.push(cosmetic);
     }
-
     return cosmetics;
   }
 

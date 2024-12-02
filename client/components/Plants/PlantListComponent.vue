@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import PlantComponent from "@/components/Plants/PlantComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
-import PlantComponent from "./PlantComponent.vue";
 // Accessing the isLoggedIn state from the store
 const { isLoggedIn } = storeToRefs(useUserStore());
 
@@ -25,23 +25,28 @@ async function getSeeds() {
 async function getCosmetics() {
   try {
     const cosmeticsResults = await fetchy(`/api/cosmetics`, "GET", {});
-    cosmetics.value = cosmeticsResults; // Assign the response to scores
-  } catch (_) {}
+    console.log(cosmeticsResults);
+    cosmetics.value = cosmeticsResults;
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 async function getAllCosmetics() {
   try {
     const all_cosmeticsResults = await fetchy(`/api/allcosmetics`, "GET", {});
     all_cosmetics.value = all_cosmeticsResults; // Assign the response to scores
-  } catch (_) {}
+  } catch (e) {
+    console.log(e);
+  }
 }
 async function classify() {
   try {
     await fetchy(`/api/classify`, "POST", {});
     await getSeeds(); // Refresh the scores after classifying
     await getCosmetics();
-  } catch (_) {
-    // Error handling
+  } catch (e) {
+    console.log(e);
   }
 }
 
@@ -60,8 +65,10 @@ onBeforeMount(async () => {
   </head>
   <section v-if="loaded">
     <p>{{ seeds.value }} Seeds</p>
-    <div class="icons">
-      <i v-for="item in cosmetics" :key="item" :class="item.description"></i>
+    <div class="icons" v-for="item in cosmetics">
+      <div v-if="item != null">
+        <i :key="item" :class="item.description"></i>
+      </div>
     </div>
     <h1>Buy Plants</h1>
     <div class="plants">
