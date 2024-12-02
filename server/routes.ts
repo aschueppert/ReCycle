@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Authing, BadgeGrouping, BinLocating, ClubGrouping, CosmeticGrouping, CosmeticLocating, Friending, Points, Posting, Seeds, Sessioning, Streaks } from "./app";
+import { Authing, BadgeGrouping, BinLocating, ClubGrouping, CosmeticGrouping, CosmeticLocating, Friending, Notifications, Points, Posting, Seeds, Sessioning, Streaks } from "./app";
 import { PostOptions } from "./concepts/posting";
 import { SessionDoc } from "./concepts/sessioning";
 import Responses from "./responses";
@@ -304,6 +304,50 @@ class Routes {
     }
     await CosmeticGrouping.addItem(group._id, id);
     return { msg: "Purchased!" };
+  }
+
+  @Router.post("/notification/inactivity")
+  async inactivityNotification(username: string) {
+    const user = await Authing.getUserByUsername(username);
+
+    const lastOnline = await Authing.getLastOnline(user._id);
+    const now = new Date();
+    const lastOnlineDate = new Date(lastOnline);
+    const diff = now.getTime() - lastOnlineDate.getTime();
+    const diffDays = diff / (1000 * 3600 * 24);
+    if (diffDays > 3) {
+      await Notifications.createNotification("ReCycle", user._id, "You have been inactive for a while. Please log in to keep your account active! <3");
+      return { msg: "Inactivity notification sent." };
+    } else {
+      return { msg: "No inactivity notification needed." };
+    }
+  }
+
+  @Router.post("/notification/bump")
+  async bumpNotification(from: string, to: string) {
+    const fromUser = await Authing.getUserByUsername(from);
+    const toUser = await Authing.getUserByUsername(to);
+    await Notifications.createNotification(fromUser._id, toUser._id, "Hey! Have you ReCycled today?");
+    await Points.increase(fromUser._id, 2);
+    await Seeds.increase(fromUser._id, 2);
+    return { msg: "Bump notification sent." };
+  }
+
+  @Router.get("/notifications/incoming")
+  async getIncomingNotifications(session: SessionDoc) {
+    const user = Sessioning.getUser(session);
+    return await Notifications.getIncomingNotifications(user);
+  }
+
+  @Router.get("/notifications/outgoing")
+  async getOutgoingNotifications(session: SessionDoc) {
+    const user = Sessioning.getUser(session);
+    return await Notifications.getOutgoingNotifications(user);
+  }
+
+  @Router.delete("/notifications")
+  async deleteNotification(_id: string) {
+    return await Notifications.deleteNotification(new ObjectId(_id));
   }
 }
 
