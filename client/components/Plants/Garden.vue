@@ -78,7 +78,6 @@ async function onMouseUp() {
       .catch((e) => console.error("Error updating location", e));
   }
   draggedItem.value = null;
-  await getPlantLocations();
 }
 </script>
 
@@ -109,5 +108,9 @@ async function onMouseUp() {
   background-color: lightgreen;
   font-size: 3em;
   color: green;
+}
+article {
+  display: flex;
+  justify-content: center;
 }
 </style>

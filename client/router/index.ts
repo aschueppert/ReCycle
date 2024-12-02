@@ -2,6 +2,7 @@ import { storeToRefs } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 
 import { useUserStore } from "@/stores/user";
+import GardenView from "../views/GardenView.vue";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/LoginView.vue";
 import MapView from "../views/MapView.vue";
@@ -32,6 +33,12 @@ const router = createRouter({
       path: "/plants",
       name: "Plants",
       component: PlantsView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/garden",
+      name: "Garden",
+      component: GardenView,
       meta: { requiresAuth: true },
     },
     {
