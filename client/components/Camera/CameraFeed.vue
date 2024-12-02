@@ -3,6 +3,7 @@ import { onBeforeUnmount, onMounted, ref } from "vue";
 
 const videoRef = ref<HTMLVideoElement | null>(null);
 const canvasRef = ref<HTMLCanvasElement | null>(null);
+const capturedImages = ref<File[]>([]);
 let stream: MediaStream | null = null;
 
 const startVideo = async () => {
@@ -10,7 +11,7 @@ const startVideo = async () => {
     stream = await navigator.mediaDevices.getUserMedia({ video: true });
     if (videoRef.value) {
       videoRef.value.srcObject = stream;
-      void videoRef.value.play();
+      await videoRef.value.play();
     }
   } catch (error) {
     console.error("Error accessing webcam:", error);
@@ -35,13 +36,25 @@ const drawToCanvas = () => {
   }
 };
 
-onMounted(async () => {
-  try {
-    await startVideo();
-    requestAnimationFrame(drawToCanvas);
-  } catch (error) {
-    console.error("Error starting video:", error);
+const captureImage = () => {
+  if (canvasRef.value) {
+    canvasRef.value.toBlob(
+      (blob) => {
+        if (blob) {
+          const file = new File([blob], `capture-${Date.now()}.jpg`, { type: "image/jpeg" });
+          capturedImages.value.push(file);
+          console.log("Image captured:", file);
+        }
+      },
+      "image/jpeg",
+      0.95,
+    );
   }
+};
+
+onMounted(() => {
+  void startVideo();
+  requestAnimationFrame(drawToCanvas);
 });
 
 onBeforeUnmount(() => {
@@ -53,6 +66,15 @@ onBeforeUnmount(() => {
   <div>
     <video ref="videoRef" style="display: none"></video>
     <canvas ref="canvasRef" width="640" height="480" style="border: 1px solid black"></canvas>
+    <div style="margin-top: 10px; text-align: center">
+      <button @click="captureImage">Capture Image</button>
+    </div>
+    <div v-if="capturedImages.length" style="margin-top: 20px">
+      <h3>Captured Images:</h3>
+      <ul>
+        <li v-for="(image, index) in capturedImages" :key="index">{{ image.name }} - {{ (image.size / 1024).toFixed(2) }} KB</li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -60,5 +82,10 @@ onBeforeUnmount(() => {
 canvas {
   display: block;
   margin: 0 auto;
+}
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
 }
 </style>
