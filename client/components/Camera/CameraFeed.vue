@@ -187,16 +187,6 @@ button {
   color: #0066cc; /* Blue text */
 }
 
-.result-recycle {
-  background-color: rgba(50, 205, 50, 0.1); /* Very subtle green */
-  color: #006400; /* Dark green text */
-}
-
-.result-trash {
-  background-color: rgba(255, 99, 71, 0.1); /* Very subtle red */
-  color: #8b0000; /* Dark red text */
-}
-
 .result-icon {
   margin-right: 10px;
   font-size: 24px;
