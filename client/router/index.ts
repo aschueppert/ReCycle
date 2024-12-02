@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/LoginView.vue";
+import MapView from "../views/MapView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import PlantsView from "../views/PlantsView.vue";
 import SettingView from "../views/SettingView.vue";
@@ -15,6 +16,11 @@ const router = createRouter({
       path: "/",
       name: "Home",
       component: HomeView,
+    },
+    {
+      path: "/map",
+      name: "Map",
+      component: MapView,
     },
     {
       path: "/setting",

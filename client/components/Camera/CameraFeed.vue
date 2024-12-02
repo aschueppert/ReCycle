@@ -5,6 +5,7 @@ import { onBeforeUnmount, onMounted, ref } from "vue";
 const videoRef = ref<HTMLVideoElement | null>(null);
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const classificationResult = ref<string | null>(null);
+const isClassifying = ref(false);
 let stream: MediaStream | null = null;
 
 const startVideo = async () => {
@@ -67,12 +68,20 @@ const classifyImage = async (image: File): Promise<string> => {
 
 const handleClassify = () => {
   if (canvasRef.value) {
+    isClassifying.value = true;
+    classificationResult.value = null;
+
     canvasRef.value.toBlob((blob) => {
       if (blob) {
         const file = new File([blob], `capture-${Date.now()}.jpg`, { type: "image/jpeg" });
-        void classifyImage(file).then((result) => {
-          classificationResult.value = result;
-        });
+        void classifyImage(file)
+          .then((result) => {
+            classificationResult.value = result;
+            isClassifying.value = false;
+          })
+          .catch(() => {
+            isClassifying.value = false;
+          });
       }
     }, "image/jpeg");
   }
@@ -100,7 +109,11 @@ onBeforeUnmount(() => {
       <div class="classify-section">
         <button @click="handleClassify">Classify</button>
 
-        <div v-if="classificationResult" class="classification-result">
+        <div v-if="isClassifying" class="classification-result classifying">
+          <span class="result-icon">🔍</span>
+          <span class="result-text">Classifying...</span>
+        </div>
+        <div v-else-if="classificationResult" class="classification-result">
           <span class="result-icon">
             {{ classificationResult === "Recycle" ? "♻️" : "🗑️" }}
           </span>
@@ -169,14 +182,9 @@ button {
   text-align: center;
 }
 
-.result-recycle {
-  background-color: rgba(50, 205, 50, 0.1); /* Very subtle green */
-  color: #006400; /* Dark green text */
-}
-
-.result-trash {
-  background-color: rgba(255, 99, 71, 0.1); /* Very subtle red */
-  color: #8b0000; /* Dark red text */
+.classifying {
+  background-color: rgba(173, 216, 230, 0.2); /* Light blue background */
+  color: #0066cc; /* Blue text */
 }
 
 .result-icon {
