@@ -58,40 +58,50 @@ onBeforeMount(async () => {
   loaded.value = true;
 });
 </script>
-
 <template>
   <head>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   </head>
-  <section v-if="loaded">
+  <article v-if="loaded">
     <p>{{ seeds.value }} Seeds</p>
-    <div class="icons" v-for="item in cosmetics">
-      <div v-if="item != null">
-        <i :key="item" :class="item.description"></i>
+
+    <div class="icons">
+      <div v-for="item in cosmetics" :key="item">
+        <i v-if="item != null" :class="item.description"></i>
       </div>
     </div>
     <h1>Buy Plants</h1>
     <div class="plants">
       <PlantComponent v-for="item in all_cosmetics" :key="item" :item="item" @refresh="getCosmetics" />
     </div>
-    <button @click="classify">getSeeds</button>
-  </section>
+    <button @click="classify">get seeds</button>
+  </article>
 </template>
 
 <style scoped>
 .plants {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap; /* Ensures items can wrap to the next line if necessary */
-  gap: 1em; /* Space between the plant items */
+  flex-wrap: wrap;
+  gap: 0.5em;
 }
 
-.icons i {
+.icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
   font-size: 3em;
   color: green;
 }
 
 button {
   margin-top: 1em;
+}
+
+article {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  padding: 1em;
 }
 </style>

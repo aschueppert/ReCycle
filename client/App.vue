@@ -25,7 +25,7 @@ onBeforeMount(async () => {
   <header>
     <nav>
       <div class="title">
-        <img src="@/assets/images/logo.svg" />
+        <i class="fa fa-recycle"></i>
         <RouterLink :to="{ name: 'Home' }">
           <h1>ReCycle</h1>
         </RouterLink>
@@ -54,7 +54,16 @@ onBeforeMount(async () => {
 
 <style scoped>
 @import "./assets/toast.css";
-
+* {
+  font-family: var(--base-font);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+i {
+  font-size: 3em;
+  color: green;
+}
 nav {
   padding: 1em 2em;
   background-color: lightgray;
