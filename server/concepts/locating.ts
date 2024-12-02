@@ -5,7 +5,7 @@ export interface LocatingDoc extends BaseDoc {
   user: ObjectId;
   lat: number;
   long: number;
-  items: string[];
+  item: string;
 }
 
 /**
@@ -21,8 +21,8 @@ export default class LocatingConcept {
     this.locations = new DocCollection<LocatingDoc>(collectionName);
   }
 
-  async createLocation(user: ObjectId, lat: number, long: number, items: string[]) {
-    const _id = await this.locations.createOne({ user, lat, long, items });
+  async createLocation(user: ObjectId, lat: number, long: number, item: string) {
+    const _id = await this.locations.createOne({ user, lat, long, item });
     return { msg: "Location successfully created!", location: await this.locations.readOne({ _id }) };
   }
 
@@ -39,7 +39,7 @@ export default class LocatingConcept {
     let minDistance = Infinity;
     for (const location of locations) {
       console.log("location", location);
-      if (location.items.includes(item)) {
+      if (location.item == item) {
         const distance = Math.hypot(lat - location.lat, long - location.long);
         if (distance < minDistance) {
           minDistance = distance;
@@ -52,5 +52,9 @@ export default class LocatingConcept {
 
   async deleteLocation(user: ObjectId, location: ObjectId) {
     return await this.locations.deleteOne({ _id: location, user });
+  }
+
+  async getLocations(user: ObjectId) {
+    return await this.locations.readMany({ user });
   }
 }

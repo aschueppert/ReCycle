@@ -97,11 +97,18 @@ class Routes {
   }
 
   @Router.post("/bin")
-  async addBin(session: SessionDoc, lat: number, lng: number, items: string[]) {
+  async addBin(session: SessionDoc, lat: number, lng: number, item: string) {
     const user = Sessioning.getUser(session);
-    const bin = await BinLocating.createLocation(user, lat, lng, items);
+    const bin = await BinLocating.createLocation(user, lat, lng, item);
     await Promise.all([Points.increase(user, 10), Seeds.increase(user, 10)]); //TODO: Badge
     return bin;
+  }
+
+  @Router.get("/plantlocations")
+  async getPlants(session: SessionDoc) {
+    const user = Sessioning.getUser(session);
+    const plant = await CosmeticLocating.getLocations(user);
+    return plant;
   }
 
   @Router.delete("/bin")
@@ -315,6 +322,7 @@ class Routes {
       return { msg: "Group not found!" };
     }
     await CosmeticGrouping.addItem(group._id, plant._id);
+    await CosmeticLocating.createLocation(user, 0, 0, plant.description);
     return { msg: "Purchased!" };
   }
 
