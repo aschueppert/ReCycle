@@ -9,20 +9,9 @@ const { isLoggedIn } = storeToRefs(useUserStore());
 
 // Reactive states
 const loaded = ref(false);
-const seeds = ref<number>(0);
-const cosmetics = ref<{ long: number; lat: number; item: string }[]>([]);
+const cosmetics = ref<{ long: number; lat: number; item: string; _id: string }[]>([]);
 const containerWidth = 600;
 const containerHeight = 600;
-
-// Fetch data
-async function getSeeds() {
-  try {
-    const seedResults = await fetchy("/api/seeds", "GET", {});
-    seeds.value = seedResults;
-  } catch (_) {
-    seeds.value = 0;
-  }
-}
 
 async function getPlantLocations() {
   try {
@@ -32,10 +21,17 @@ async function getPlantLocations() {
     console.log(e);
   }
 }
+async function setPlantLocation(item: string, lat: number, long: number, id: string) {
+  try {
+    console.log(id);
+    await fetchy("/api/plantlocations", "PATCH", { body: { location: id, lat: lat, long: long } });
+  } catch (e) {
+    console.log(e);
+  }
+}
 
 // Fetch scores when the component mounts
 onBeforeMount(async () => {
-  await getSeeds();
   await getPlantLocations();
   loaded.value = true;
 });
@@ -71,14 +67,23 @@ function onMouseMove(event: MouseEvent) {
   }
 }
 
-function onMouseUp() {
+async function onMouseUp() {
+  if (draggedItem.value !== null) {
+    const { index } = draggedItem.value;
+
+    // Save the new position to the server
+    const { item, lat, long, _id } = cosmetics.value[index];
+    setPlantLocation(item, lat, long, _id)
+      .then(() => console.log(`Location updated: ${item}, lat: ${lat}, long: ${long}`))
+      .catch((e) => console.error("Error updating location", e));
+  }
   draggedItem.value = null;
+  await getPlantLocations();
 }
 </script>
 
 <template>
   <article v-if="loaded">
-    <p>{{ seeds }} Seeds</p>
     <div class="icons" @mousemove="onMouseMove" @mouseup="onMouseUp" @mouseleave="onMouseUp">
       <div
         v-for="(item, index) in cosmetics"
@@ -99,8 +104,8 @@ function onMouseUp() {
 <style scoped>
 .icons {
   position: relative;
-  width: 600px;
-  height: 600px;
+  width: 650px;
+  height: 650px;
   background-color: lightgreen;
   font-size: 3em;
   color: green;

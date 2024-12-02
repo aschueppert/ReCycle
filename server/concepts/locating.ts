@@ -28,6 +28,7 @@ export default class LocatingConcept {
 
   async changeLocation(user: ObjectId, lat: number, long: number, location: ObjectId) {
     await this.locations.partialUpdateOne({ _id: location, user }, { lat, long });
+    console.log(await this.locations.readOne({ location }));
     return { msg: "Location successfully updated!", location: await this.locations.readOne({ _id: location }) };
   }
 

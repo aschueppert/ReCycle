@@ -110,6 +110,13 @@ class Routes {
     const plant = await CosmeticLocating.getLocations(user);
     return plant;
   }
+  @Router.patch("/plantlocations")
+  async movePlant(session: SessionDoc, location: string, lat: number, long: number) {
+    const user = Sessioning.getUser(session);
+    console.log(location);
+    await CosmeticLocating.changeLocation(user, lat, long, new ObjectId(location));
+    return { msg: "Plant moved!" };
+  }
 
   @Router.delete("/bin")
   async removeBin(session: SessionDoc, location: string) {
