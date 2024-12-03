@@ -3,7 +3,7 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 import LocatingFormComponent from "./LocatingFormComponent.vue";
-import MapComponent from "./MapComponent.vue";
+import MapComponent from "./MapFormComponent.vue";
 
 const { isLoggedIn } = storeToRefs(useUserStore());
 
