@@ -355,6 +355,11 @@ class Routes {
     return seeds;
   }
 
+  @Router.post("/plants")
+  async makePlant(name: string, value: number, description: string) {
+    await Plants.create(value, name, description);
+  }
+
   @Router.post("/purchase")
   async purchase(session: SessionDoc, item: string) {
     const user = Sessioning.getUser(session);

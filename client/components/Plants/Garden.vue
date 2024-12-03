@@ -94,7 +94,7 @@ async function onMouseUp() {
         }"
         @mousedown="onMouseDown($event, index)"
       >
-        <i v-if="item" :class="item.item"></i>
+        <img v-if="item != null" :src="'client/components/Plants/' + item.item" draggable="false" />
       </div>
     </div>
   </article>
@@ -105,12 +105,16 @@ async function onMouseUp() {
   position: relative;
   width: 650px;
   height: 650px;
-  background-color: lightgreen;
+  background-color: #ccdc99;
   font-size: 3em;
   color: green;
 }
 article {
   display: flex;
   justify-content: center;
+}
+img {
+  width: 50px;
+  height: 70px;
 }
 </style>

@@ -4,6 +4,7 @@ import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
+import CreatePlantForm from "./CreatePlantForm.vue";
 // Accessing the isLoggedIn state from the store
 const { isLoggedIn } = storeToRefs(useUserStore());
 
@@ -67,7 +68,7 @@ onBeforeMount(async () => {
 
     <div class="icons">
       <div v-for="item in cosmetics" :key="item">
-        <i v-if="item != null" :class="item.description"></i>
+        <img v-if="item != null" :src="'client/components/Plants/' + item.description" />
       </div>
     </div>
     <h1>Buy Plants</h1>
@@ -75,6 +76,7 @@ onBeforeMount(async () => {
       <PlantComponent v-for="item in all_cosmetics" :key="item" :item="item" @refresh="getCosmetics" />
     </div>
     <button @click="classify">get seeds</button>
+    <CreatePlantForm @refresh="getAllCosmetics" />
   </article>
 </template>
 
@@ -103,5 +105,9 @@ article {
   flex-direction: column;
   gap: 0.5em;
   padding: 1em;
+}
+img {
+  width: 40px;
+  height: 60px;
 }
 </style>

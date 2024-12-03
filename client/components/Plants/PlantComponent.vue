@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import router from "@/router";
 import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { defineEmits, defineProps, onBeforeMount, ref } from "vue";
+
 // Accessing the isLoggedIn state from the store
 
 const { isLoggedIn } = storeToRefs(useUserStore());
@@ -15,6 +17,7 @@ const loaded = ref(false);
 async function buyPlant(item: string) {
   try {
     await fetchy(`/api/purchase`, "POST", { body: { item } });
+    void router.push({ name: "Garden" });
     emit("refresh");
   } catch (_) {
     // Error handling
@@ -33,7 +36,7 @@ onBeforeMount(async () => {
   </head>
   <section v-if="loaded">
     <p>{{ props.item.value }} Seeds</p>
-    <i :class="props.item.description"></i>
+    <img v-if="props.item != null" :src="'client/components/Plants/' + props.item.description" />
     <button @click="buyPlant(props.item.name)">grow</button>
   </section>
 </template>
@@ -52,7 +55,10 @@ i {
   font-size: 3em;
   color: green;
 }
-
+img {
+  width: 50px;
+  height: 70px;
+}
 button {
   margin-top: 1em;
 }
