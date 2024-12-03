@@ -104,11 +104,14 @@ class Routes {
     return { msg: "Logged out!" };
   }
 
-  @Router.get("/bin")
+  @Router.get("/bin/:lat/:lng/:type")
   async locateBin(session: SessionDoc, lat: number, lng: number, item: string) {
-    const user = Sessioning.getUser(session);
     const bin = await BinLocating.getNearestLocation(lat, lng, item);
-    await Promise.all([Points.increase(user, 2), Seeds.increase(user, 2)]); //TODO: Badge
+    if (session.user !== undefined) {
+      const user = Sessioning.getUser(session);
+      await Promise.all([Points.increase(user, 2), Seeds.increase(user, 2)]); //TODO: Badge
+    }
+
     return bin;
   }
 

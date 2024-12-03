@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LocatingComponent from "@/components/BinLocating/LocatingComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 
@@ -8,7 +9,9 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 <template>
   <main>
     <section>
-      <div class="min-h-screen flex items-center justify-center"></div>
+      <div class="min-h-screen flex items-center justify-center">
+        <LocatingComponent />
+      </div>
     </section>
   </main>
 </template>
