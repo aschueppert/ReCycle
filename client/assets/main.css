@@ -16,6 +16,7 @@ button {
   border: none;
   border-radius: 0.25em;
   cursor: pointer;
+  text-decoration: none;
 }
 button.btn-small {
   font-size: 80%;

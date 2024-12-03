@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import PlantComponent from "@/components/Plants/PlantComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
-import CreatePlantForm from "./CreatePlantForm.vue";
 // Accessing the isLoggedIn state from the store
 const { isLoggedIn } = storeToRefs(useUserStore());
 
@@ -33,29 +31,10 @@ async function getCosmetics() {
   }
 }
 
-async function getAllCosmetics() {
-  try {
-    const all_cosmeticsResults = await fetchy(`/api/allcosmetics`, "GET", {});
-    all_cosmetics.value = all_cosmeticsResults; // Assign the response to scores
-  } catch (e) {
-    console.log(e);
-  }
-}
-async function classify() {
-  try {
-    await fetchy(`/api/classify`, "POST", {});
-    await getSeeds(); // Refresh the scores after classifying
-    await getCosmetics();
-  } catch (e) {
-    console.log(e);
-  }
-}
-
 // Fetch scores when the component mounts
 onBeforeMount(async () => {
   await getSeeds();
   await getCosmetics();
-  await getAllCosmetics();
   loaded.value = true;
 });
 </script>
@@ -64,14 +43,13 @@ onBeforeMount(async () => {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   </head>
   <article v-if="loaded">
-    <p>{{ seeds.value }} Seeds</p>
-
-    <h1>Buy Plants</h1>
-    <div class="plants">
-      <PlantComponent v-for="item in all_cosmetics" :key="item" :item="item" @refresh="getCosmetics" />
-    </div>
-    <button @click="classify">get seeds</button>
-    <CreatePlantForm @refresh="getAllCosmetics" />
+    <h1>{{ seeds.value }} Seeds</h1>
+    <h1>Garden</h1>
+    <router-link :to="{ name: 'Garden' }" class="icons">
+      <div v-for="item in cosmetics" :key="item">
+        <img v-if="item != null" :src="'client/components/Plants/' + item.description" />
+      </div>
+    </router-link>
   </article>
 </template>
 
@@ -87,12 +65,10 @@ onBeforeMount(async () => {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5em;
-  font-size: 3em;
-  color: green;
-}
-
-button {
-  margin-top: 1em;
+  padding: 1em;
+  background-color: lightgray;
+  border: 2px solid lightgray; /* Adjust the border color as needed */
+  border-radius: 15px; /* Adjust the radius for rounded corners */
 }
 
 article {

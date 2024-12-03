@@ -8,6 +8,7 @@ import LoginView from "../views/LoginView.vue";
 import MapView from "../views/MapView.vue";
 import NotFoundView from "../views/NotFoundView.vue";
 import PlantsView from "../views/PlantsView.vue";
+import ProfileView from "../views/ProfileView.vue";
 import SettingView from "../views/SettingView.vue";
 
 const router = createRouter({
@@ -39,6 +40,12 @@ const router = createRouter({
       path: "/garden",
       name: "Garden",
       component: GardenView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/profile",
+      name: "Profile",
+      component: ProfileView,
       meta: { requiresAuth: true },
     },
     {

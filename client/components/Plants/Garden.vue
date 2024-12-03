@@ -97,6 +97,7 @@ async function onMouseUp() {
         <img v-if="item != null" :src="'client/components/Plants/' + item.item" draggable="false" />
       </div>
     </div>
+    <button><router-link class="link" :to="{ name: 'Plants' }">Grow Plants</router-link></button>
   </article>
 </template>
 
@@ -106,15 +107,20 @@ async function onMouseUp() {
   width: 650px;
   height: 650px;
   background-color: #ccdc99;
-  font-size: 3em;
-  color: green;
 }
 article {
   display: flex;
-  justify-content: center;
+  gap: 10px;
+  flex-direction: column; /* Stacks items vertically */
+  justify-content: center; /* Centers items vertically */
+  align-items: center; /* Centers items horizontally */
 }
 img {
   width: 50px;
   height: 70px;
+}
+.link {
+  text-decoration: none; /* Removes underline */
+  color: inherit; /* Inherits color from parent or sets custom color */
 }
 </style>
