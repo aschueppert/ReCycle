@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import LocatingComponent from "@/components/BinLocating/LocatingComponent.vue";
+import LocatingComponent from "@/components/Bins/LocatingComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 
