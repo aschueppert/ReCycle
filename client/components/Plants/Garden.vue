@@ -83,6 +83,7 @@ async function onMouseUp() {
 
 <template>
   <article v-if="loaded">
+    <p>Click and move plants to rearrange garden</p>
     <div class="icons" @mousemove="onMouseMove" @mouseup="onMouseUp" @mouseleave="onMouseUp">
       <div
         v-for="(item, index) in cosmetics"
