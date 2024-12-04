@@ -11,9 +11,10 @@ const friendRequestsStore = useFriendRequestsStore();
 const { friendRequests } = storeToRefs(useFriendRequestsStore());
 const { isLoggedIn, currentUsername } = storeToRefs(useUserStore());
 const loaded = ref(false);
+
 // State for search bar
 const searchQuery = ref("");
-const searchResults = ref<string[]>([]); // Simulate a list of usernames to search
+const searchResults = ref<{ username: string }[]>([]);
 
 // Filtered list based on search query
 const filterUsers = async () => {
@@ -21,13 +22,19 @@ const filterUsers = async () => {
     searchResults.value = [];
     return;
   }
-  let allUsers;
+
   try {
-    allUsers = await fetchy(`/users`, "GET");
-  } catch (_) {
-    return;
+    // Fetch users from the API
+    const response = await fetchy(`/api/users`, "GET");
+    // Assuming `response` is an array of UserDoc
+    const allUsers: { username: string; password: string; lastOnline: number }[] = response;
+
+    // Filter users based on the search query
+    searchResults.value = allUsers.filter((user) => user.username.toLowerCase().includes(searchQuery.value.toLowerCase())).map((user) => ({ username: user.username })); // Redact sensitive data
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    searchResults.value = [];
   }
-  searchResults.value = allUsers.value.filter((user: { username: string }) => user.username.toLowerCase().includes(searchQuery.value.toLowerCase()));
 };
 
 // Send friend request
@@ -46,9 +53,9 @@ const sendRequest = async (username: string) => {
     <h2>Search for Friends</h2>
     <input v-model="searchQuery" @input="filterUsers" type="text" placeholder="Search for a username" />
     <ul v-if="searchResults.length">
-      <li v-for="user in searchResults" :key="user">
-        <span>{{ user }}</span>
-        <button @click="sendRequest(user)">Add Friend</button>
+      <li v-for="user in searchResults" :key="user.username">
+        <span>{{ user.username }}</span>
+        <button @click="sendRequest(user.username)">Add Friend</button>
       </li>
     </ul>
     <p v-else-if="searchQuery.trim()">No results found</p>
