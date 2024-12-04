@@ -95,7 +95,7 @@ async function onMouseUp() {
         }"
         @mousedown="onMouseDown($event, index)"
       >
-        <img v-if="item != null" :src="'client/components/Plants/' + item.item" draggable="false" />
+        <img v-if="item != null" :src="'client/assets/images/' + item.item" draggable="false" />
       </div>
     </div>
     <button><router-link class="link" :to="{ name: 'Plants' }">Grow Plants</router-link></button>

@@ -360,6 +360,19 @@ class Routes {
     const seeds = await Seeds.getValue(user);
     return seeds;
   }
+  @Router.get("/points")
+  async getPoints(session: SessionDoc) {
+    const user = Sessioning.getUser(session);
+    const points = await Points.getValue(user);
+    return points;
+  }
+
+  @Router.get("/streak")
+  async getStreak(session: SessionDoc) {
+    const user = Sessioning.getUser(session);
+    const streak = await Streaks.getValue(user);
+    return streak;
+  }
 
   @Router.post("/plants")
   async makePlant(name: string, value: number, description: string) {

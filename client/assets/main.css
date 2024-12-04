@@ -37,3 +37,8 @@ button.button-error {
 main {
   padding: 2em;
 }
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

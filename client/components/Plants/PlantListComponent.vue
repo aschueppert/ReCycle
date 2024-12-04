@@ -64,8 +64,10 @@ onBeforeMount(async () => {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   </head>
   <article v-if="loaded">
-    <p>{{ seeds.value }} Seeds</p>
-
+    <button class="seeds">
+      <img class="seed" :src="'client/components/Login/seed.png'" />
+      <p>{{ seeds.value }} Seeds</p>
+    </button>
     <h1>Buy Plants</h1>
     <div class="plants">
       <PlantComponent v-for="item in all_cosmetics" :key="item" :item="item" @refresh="getCosmetics" />
@@ -83,14 +85,12 @@ onBeforeMount(async () => {
   gap: 0.5em;
 }
 
-.icons {
+.seeds {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5em;
-  font-size: 3em;
-  color: green;
+  flex-direction: row;
+  align-items: center;
+  width: min-content;
 }
-
 button {
   margin-top: 1em;
 }
@@ -104,5 +104,9 @@ article {
 img {
   width: 40px;
   height: 60px;
+}
+.seed {
+  height: 40px;
+  width: 40px;
 }
 </style>

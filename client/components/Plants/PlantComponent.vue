@@ -24,6 +24,21 @@ async function buyPlant(item: string) {
   }
 }
 
+function getImagePath(item: string) {
+  const paths: { [key: string]: string } = {
+    "1.png": "@/assets/images/1.png",
+    "2.png": "@/assets/images/2.png",
+    "8.png": "@/assets/images/8.png",
+    "3.png": "@/assets/images/3.png",
+    "4.png": "@/assets/images/4.png",
+    "5.png": "@/assets/images/5.png",
+    "6.png": "@/assets/images/6.png",
+    "7.png": "@/assets/images/7.png",
+    "9.png": "@/assets/images/9.png",
+  };
+  console.log(paths[item]);
+  return paths[item];
+}
 // Fetch scores when the component mounts
 onBeforeMount(async () => {
   loaded.value = true;
@@ -36,7 +51,7 @@ onBeforeMount(async () => {
   </head>
   <section v-if="loaded">
     <p>{{ props.item.value }} Seeds</p>
-    <img v-if="props.item != null" :src="`client/components/Plants/${props.item.description}`" />
+    <img v-if="props.item != null" :src="'client/assets/images/' + props.item.description" />
     <button @click="buyPlant(props.item.name)">grow</button>
   </section>
 </template>
