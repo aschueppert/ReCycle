@@ -50,7 +50,4 @@ void connectDb().then(() => {
   });
 });
 
-export default {
-  app,
-  assetsInclude: ["**/*.png", "**/*.jpg"],
-};
+export default app;
