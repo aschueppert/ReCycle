@@ -10,6 +10,7 @@ import NotFoundView from "../views/NotFoundView.vue";
 import PlantsView from "../views/PlantsView.vue";
 import ProfileView from "../views/ProfileView.vue";
 import SettingView from "../views/SettingView.vue";
+import AddFriendView from "../views/AddFriendView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -64,6 +65,11 @@ const router = createRouter({
       path: "/:catchAll(.*)",
       name: "not-found",
       component: NotFoundView,
+    },
+    {
+      path: "/addFriend",
+      name: "AddFriend",
+      component: AddFriendView,
     },
   ],
 });
