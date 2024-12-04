@@ -12,7 +12,7 @@ const friendRequests = ref<Array<Record<string, string>>>([]);
 async function getFriendRequests() {
   let friendRequestResults;
   try {
-    friendRequestResults = await fetchy(`/api/friend/requests`, "GET", { alert: false });
+    friendRequestResults = await fetchy(`/api/friend/pendingRequests`, "GET", { alert: false });
   } catch (_) {
     return;
   }

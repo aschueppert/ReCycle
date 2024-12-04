@@ -34,6 +34,15 @@ export default class FriendingConcept {
     });
   }
 
+  async getPendingRequests(user: ObjectId) {
+    return await this.requests.readMany({
+      $or: [
+        { from: user, status: "pending" },
+        { to: user, status: "pending" },
+      ],
+    });
+  }
+
   async sendRequest(from: ObjectId, to: ObjectId) {
     await this.canSendRequest(from, to);
     await this.requests.createOne({ from, to, status: "pending" });
