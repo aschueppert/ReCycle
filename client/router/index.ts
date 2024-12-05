@@ -11,6 +11,7 @@ import PlantsView from "../views/PlantsView.vue";
 import ProfileView from "../views/ProfileView.vue";
 import SettingView from "../views/SettingView.vue";
 import AddFriendView from "../views/AddFriendView.vue";
+import FriendsView from "../views/FriendsView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -70,6 +71,11 @@ const router = createRouter({
       path: "/addFriend",
       name: "AddFriend",
       component: AddFriendView,
+    },
+    {
+      path: "/friends",
+      name: "Friends",
+      component: FriendsView,
     },
   ],
 });

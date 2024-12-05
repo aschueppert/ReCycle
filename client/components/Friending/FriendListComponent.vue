@@ -30,7 +30,7 @@ onBeforeMount(async () => {
     <div v-if="loaded && friends.length !== 0">
       <ul class="friend-items">
         <li v-for="friend in friends" :key="friend._id">
-          {{ currentUsername === friend.user1 ? friend.user2 : friend.user1 }}
+          {{ friend }}
         </li>
       </ul>
     </div>
