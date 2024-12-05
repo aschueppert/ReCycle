@@ -4,18 +4,22 @@ import LeaderboardComponent from "@/components/Leaderboard/LeaderboardComponent.
 </script>
 
 <template>
-  <main>
+  <main class="main-container">
     <section>
       <div class="min-h-screen flex items-center justify-center">
         <CameraFeed />
       </div>
     </section>
+    <LeaderboardComponent />
   </main>
-  <LeaderboardComponent />
 </template>
 
 <style scoped>
 h1 {
   text-align: center;
+}
+
+.main-container {
+  padding-bottom: 20px; /* Add breathing room at the bottom */
 }
 </style>

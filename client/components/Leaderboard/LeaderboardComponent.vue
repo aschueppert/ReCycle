@@ -9,6 +9,7 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 const loaded = ref(false);
 const points = ref<Array<Record<string, string>>>([]);
 const friendsPoints = ref<Array<Record<string, string>>>([]);
+const selectedMode = ref<"all" | "friends">("all");
 
 async function getPoints() {
   try {
@@ -59,6 +60,10 @@ function getMedalEmoji(index: number) {
   return "";
 }
 
+function toggleMode(mode: "all" | "friends") {
+  selectedMode.value = mode;
+}
+
 onBeforeMount(async () => {
   await getPoints();
   await getFriendsPoints();
@@ -69,9 +74,13 @@ onBeforeMount(async () => {
 <template>
   <div class="leaderboard">
     <h2>Leaderboard</h2>
+    <div class="toggle-container">
+      <button :class="['mode-button', { selected: selectedMode === 'all' }]" @click="toggleMode('all')">All Users</button>
+      <button :class="['mode-button', { selected: selectedMode === 'friends' }]" @click="toggleMode('friends')">Friends Only</button>
+    </div>
     <div class="points-container">
-      <ul v-if="loaded && points.length !== 0">
-        <li v-for="(user, index) in points" :key="user.item" :class="getRowClass(index)">
+      <ul v-if="loaded && (selectedMode === 'all' ? points : friendsPoints).length !== 0">
+        <li v-for="(user, index) in selectedMode === 'all' ? points : friendsPoints" :key="user.item" :class="getRowClass(index)">
           <span class="rank medal-emoji" v-if="index < 3">{{ getMedalEmoji(index) }}</span>
           <span class="rank" v-else>#{{ index + 1 }}</span>
           <span class="username">{{ user.item }}</span>
@@ -103,8 +112,32 @@ onBeforeMount(async () => {
   color: #333;
 }
 
+.toggle-container {
+  display: flex;
+  gap: 10px;
+}
+
+.mode-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px solid #000;
+  border-radius: 25px;
+  background-color: white;
+  color: #000;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+.mode-button.selected {
+  background-color: black;
+  color: white;
+}
+
 .points-container {
-  max-height: 400px; /* adjustable height of leadeboard container */
+  max-height: 400px; /* adjustable height of leaderboard container */
   overflow-y: auto;
 }
 
