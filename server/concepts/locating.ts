@@ -34,13 +34,12 @@ export default class LocatingConcept {
 
   async getNearestLocation(lat: number, long: number, item: string) {
     const locations = await this.locations.readMany({});
-
     // use euclidean distance between currrent lat/long and each location to get the nearest
     let nearest: { lat: number; lng: number } | undefined = undefined;
     let minDistance = Infinity;
     for (const location of locations) {
       console.log("location", location);
-      if (location.item == item) {
+      if (location.item === item) {
         const distance = Math.hypot(lat - location.lat, long - location.long);
         if (distance < minDistance) {
           minDistance = distance;

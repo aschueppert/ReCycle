@@ -15,6 +15,10 @@ const binType = ref<"trash" | "recycle">("trash");
 const mapMode = ref<"view" | "directions">("view");
 const mapUrl = ref("");
 
+const formLat = ref("");
+const formLng = ref("");
+const formItem = ref("");
+
 async function updateMapUrl() {
   if (mapMode.value === "view") {
     mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&center=${userLatitude.value},${userLongitude.value}&zoom=5`;
@@ -67,8 +71,23 @@ async function addBin(lat: number, lng: number, item: string) {
         item,
       },
     });
+    console.log("Bin added successfully");
   } catch (_) {
-    return;
+    console.log("Error adding bin.");
+  }
+}
+
+async function handleSubmit() {
+  if (formLat.value && formLng.value && formItem.value) {
+    const lat = parseFloat(formLat.value);
+    const lng = parseFloat(formLng.value);
+    const item = formItem.value;
+    await addBin(lat, lng, item);
+    formLat.value = "";
+    formLng.value = "";
+    formItem.value = "";
+  } else {
+    console.log("Please fill all fields.");
   }
 }
 
@@ -101,6 +120,23 @@ onBeforeMount(async () => {
     <p>Destination Latitude: {{ destinationLatitude }}</p>
     <p>Destination Longitude: {{ destinationLongitude }}</p>
     <iframe :src="mapUrl" width="600" height="450" style="border: 0" loading="lazy"></iframe>
+
+    <h2>Add a New Bin</h2>
+    <form @submit.prevent="handleSubmit">
+      <div>
+        <label for="lat">Latitude:</label>
+        <input id="lat" v-model="formLat" type="text" />
+      </div>
+      <div>
+        <label for="lng">Longitude:</label>
+        <input id="lng" v-model="formLng" type="text" />
+      </div>
+      <div>
+        <label for="item">Item:</label>
+        <input id="item" v-model="formItem" type="text" />
+      </div>
+      <button type="submit">Add Bin</button>
+    </form>
   </div>
   <div v-else>
     <p>Loading...</p>
@@ -119,5 +155,19 @@ button {
   padding: 10px;
   font-size: 16px;
   cursor: pointer;
+}
+form {
+  margin-top: 20px;
+}
+form div {
+  margin-bottom: 10px;
+}
+label {
+  display: inline-block;
+  width: 100px;
+}
+input {
+  padding: 5px;
+  font-size: 14px;
 }
 </style>
