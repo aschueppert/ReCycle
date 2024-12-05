@@ -58,6 +58,20 @@ async function getNearestBin() {
   }
 }
 
+async function addBin(lat: number, lng: number, item: string) {
+  try {
+    await fetchy(`/api/bin`, "POST", {
+      body: {
+        lat,
+        lng,
+        item,
+      },
+    });
+  } catch (_) {
+    return;
+  }
+}
+
 async function locateBin() {
   await getNearestBin();
   mapMode.value = "directions";
