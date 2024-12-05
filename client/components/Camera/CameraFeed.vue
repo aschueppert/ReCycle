@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import axios from "axios";
 import { onBeforeUnmount, onMounted, ref } from "vue";
+import { fetchy } from "@/utils/fetchy";
 
 const videoRef = ref<HTMLVideoElement | null>(null);
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -59,9 +60,22 @@ const classifyImage = async (image: File): Promise<string> => {
     });
 
     const predictedClass = response.data?.predictions?.[0]?.class || "other";
-    return predictedClass.toLowerCase() === "other" ? "Trash" : "Recycle";
+    const result = predictedClass.toLowerCase() === "other" ? "Trash" : "Recycle";
+    try {
+      const body: Record<string, string> = { type: result };
+      await fetchy(`/api/classify`, "POST", { body });
+    } catch (error) {
+      console.error("Error saving classification:", error);
+    }
+    return result;
   } catch (error) {
     console.error("Error classifying image: ", error);
+    try {
+      const body: Record<string, string> = { type: "Trash" };
+      await fetchy(`/api/classify`, "POST", { body });
+    } catch (error) {
+      console.error("Error saving classification:", error);
+    }
     return "Trash";
   }
 };

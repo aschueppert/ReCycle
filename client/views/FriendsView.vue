@@ -3,7 +3,7 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import FriendListComponent from "@/components/Friending/FriendListComponent.vue";
 import { computed } from "vue";
-import { RouterLink, RouterView, useRoute } from "vue-router";
+import { RouterLink, useRoute } from "vue-router";
 
 const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
