@@ -1,14 +1,37 @@
 <script setup lang="ts">
+import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
+import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
+
+const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 const loaded = ref(false);
 const points = ref<Array<Record<string, string>>>([]);
+const friendsPoints = ref<Array<Record<string, string>>>([]);
 
 async function getPoints() {
   try {
     const pointsResults = await fetchy("/api/points/all", "GET", {});
     points.value = pointsResults;
+  } catch (_) {
+    return;
+  }
+}
+
+async function getFriendsPoints() {
+  if (!isLoggedIn.value) {
+    return;
+  }
+  try {
+    const friends = await fetchy("/api/friends", "GET", {});
+    let friendsPointsResults: Array<Record<string, string>> = [];
+    for (const user of points.value) {
+      if (friends.includes(user.item) || user.item === currentUsername.value) {
+        friendsPointsResults.push(user);
+      }
+    }
+    friendsPoints.value = friendsPointsResults;
   } catch (_) {
     return;
   }
@@ -38,6 +61,7 @@ function getMedalEmoji(index: number) {
 
 onBeforeMount(async () => {
   await getPoints();
+  await getFriendsPoints();
   loaded.value = true;
 });
 </script>
@@ -68,7 +92,7 @@ onBeforeMount(async () => {
   padding: 20px;
   border-radius: 12px;
   background-color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
 .leaderboard h2 {
