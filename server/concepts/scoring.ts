@@ -31,6 +31,10 @@ export default class ScoringConcept {
     return await this.scores.readOne({ item });
   }
 
+  async getAll() {
+    return await this.scores.readMany({}, { sort: { value: -1 } });
+  }
+
   async increase(item: ObjectId, increase: number) {
     const score = await this.scores.readOne({ item });
     if (!score) {

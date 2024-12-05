@@ -367,6 +367,11 @@ class Routes {
     return points;
   }
 
+  @Router.get("/points/all")
+  async getAllPoints() {
+    return await Responses.scorings(await Points.getAll());
+  }
+
   @Router.get("/streak")
   async getStreak(session: SessionDoc) {
     const user = Sessioning.getUser(session);

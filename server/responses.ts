@@ -2,6 +2,7 @@ import { Authing } from "./app";
 import { ClassificationDoc } from "./concepts/classifying";
 import { AlreadyFriendsError, FriendNotFoundError, FriendRequestAlreadyExistsError, FriendRequestDoc, FriendRequestNotFoundError } from "./concepts/friending";
 import { PostAuthorNotMatchError, PostDoc } from "./concepts/posting";
+import { ScoringDoc } from "./concepts/scoring";
 import { Router } from "./framework/router";
 
 /**
@@ -57,6 +58,31 @@ export default class Responses {
   static async classifications(classifications: ClassificationDoc[]) {
     const users = await Authing.idsToUsernames(classifications.map((classification) => classification.user));
     return classifications.map((classification, i) => ({ ...classification, user: users[i] }));
+  }
+
+  /**
+   * Convert ScoringDoc into more readable format for the frontend
+   * by converting the item id into a username if the item is a user id.
+   * Otherwise, it will return the item as is.
+   */
+  static async scoring(scoring: ScoringDoc | null) {
+    if (!scoring) {
+      return scoring;
+    }
+    try {
+      const user = await Authing.getUserById(scoring.item);
+      return { ...scoring, item: user.username };
+    } catch {
+      return scoring;
+    }
+  }
+
+  /**
+   * Same as {@link scoring} but for an array of ScoringDoc for improved performance.
+   */
+  static async scorings(scorings: ScoringDoc[]) {
+    const users = await Authing.idsToUsernames(scorings.map((scoring) => scoring.item));
+    return scorings.map((scoring, i) => ({ ...scoring, item: users[i] === "DELETED_USER" ? scoring.item : users[i] }));
   }
 }
 

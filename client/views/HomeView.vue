@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CameraFeed from "@/components/Camera/CameraFeed.vue";
+import LeaderboardComponent from "@/components/Leaderboard/LeaderboardComponent.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 
@@ -14,6 +15,7 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
       </div>
     </section>
   </main>
+  <LeaderboardComponent />
 </template>
 
 <style scoped>
