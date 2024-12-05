@@ -2,6 +2,7 @@
 import Profile from "@/components/Login/Profile.vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
+import SettingView from "./SettingView.vue";
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 </script>
 
@@ -9,6 +10,7 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
   <main>
     <h1>{{ currentUsername }}'s Profile</h1>
     <Profile />
+    <SettingView />
   </main>
 </template>
 
