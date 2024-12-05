@@ -64,11 +64,11 @@ onBeforeMount(async () => {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   </head>
   <article v-if="loaded">
-    <button class="seeds">
+    <h2>Buy Plants</h2>
+    <div class="seeds">
       <img class="seed" :src="'client/components/Login/seed.png'" />
       <p>{{ seeds.value }} Seeds</p>
-    </button>
-    <h1>Buy Plants</h1>
+    </div>
     <div class="plants">
       <PlantComponent v-for="item in all_cosmetics" :key="item" :item="item" @refresh="getCosmetics" />
     </div>
@@ -78,35 +78,58 @@ onBeforeMount(async () => {
 </template>
 
 <style scoped>
-.plants {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 0.5em;
-}
-
-.seeds {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: min-content;
-}
-button {
-  margin-top: 1em;
-}
-
+/* General styling */
 article {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
-  padding: 1em;
+  align-items: center;
+  gap: 1em;
+  padding: 2em;
 }
-img {
-  width: 40px;
-  height: 60px;
+
+/* Text styling */
+h2 {
+  color: #044120;
+  font-weight: bold;
 }
+
+p {
+  color: #044120;
+  margin: 0;
+}
+
+/* Plants container */
+.plants {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1em;
+  margin-top: 1em;
+}
+
+/* Seeds button */
+.seeds {
+  display: flex;
+  align-items: center;
+  color: #044120;
+  font-size: 1rem;
+}
+
 .seed {
   height: 40px;
   width: 40px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .plants {
+    flex-direction: column;
+    gap: 0.5em;
+  }
+
+  .seeds {
+    flex-direction: column;
+    text-align: center;
+  }
 }
 </style>
