@@ -14,6 +14,17 @@ async function getPoints() {
   }
 }
 
+function getRowClass(index: number) {
+  if (index === 0) {
+    return "gold";
+  } else if (index === 1) {
+    return "silver";
+  } else if (index === 2) {
+    return "bronze";
+  }
+  return "";
+}
+
 onBeforeMount(async () => {
   await getPoints();
   loaded.value = true;
@@ -23,15 +34,17 @@ onBeforeMount(async () => {
 <template>
   <div class="leaderboard">
     <h2>Leaderboard</h2>
-    <ul v-if="loaded && points.length !== 0">
-      <li v-for="(user, index) in points" :key="user.item">
-        <span class="rank">{{ index + 1 }}.</span>
-        <span class="username">{{ user.item }}</span>
-        <span class="points">{{ user.value }} pts</span>
-      </li>
-    </ul>
-    <p v-else-if="loaded">No data found</p>
-    <p v-else>Loading...</p>
+    <div class="points-container">
+      <ul v-if="loaded && points.length !== 0">
+        <li v-for="(user, index) in points" :key="user.item" :class="getRowClass(index)">
+          <span class="rank">#{{ index + 1 }}</span>
+          <span class="username">{{ user.item }}</span>
+          <span class="points">{{ user.value }} pts</span>
+        </li>
+      </ul>
+      <p v-else-if="loaded">No data found</p>
+      <p v-else>Loading...</p>
+    </div>
   </div>
 </template>
 
@@ -41,27 +54,38 @@ onBeforeMount(async () => {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #f9f9f9;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .leaderboard h2 {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.5rem;
+  margin-bottom: 15px;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.points-container {
+  max-height: 400px; /* adjustable height of leadeboard container */
+  overflow-y: auto;
 }
 
 ul {
   list-style-type: none;
   padding: 0;
+  margin: 0;
 }
 
 li {
   display: flex;
   justify-content: space-between;
-  padding: 10px 15px;
-  border-bottom: 1px solid #ddd;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f1f1;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
 }
 
 li:last-child {
@@ -70,6 +94,7 @@ li:last-child {
 
 .rank {
   font-weight: bold;
+  color: #333;
 }
 
 .username {
@@ -80,5 +105,29 @@ li:last-child {
 .points {
   font-weight: bold;
   color: #333;
+}
+
+p {
+  text-align: center;
+  font-size: 1rem;
+  color: #888;
+}
+
+.gold {
+  background-color: #ffdc1f;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+.silver {
+  background-color: #c3c3c3;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+.bronze {
+  background-color: #d18942;
+  font-weight: 700;
+  border-radius: 4px;
 }
 </style>
