@@ -6,6 +6,7 @@ const GOOGLE_MAP_API_KEY = "AIzaSyDqYZHShrNYA5aDPkiOfq2I5iEOcUBUKnw";
 
 const loaded = ref(false);
 const showContributeForm = ref(false);
+const useCurrentLocation = ref(false);
 
 const userLatitude = ref(36.7783); // Default latitude
 const userLongitude = ref(-119.4179); // Default longitude
@@ -63,19 +64,31 @@ async function addBin(lat: number, lng: number, item: string) {
     formLat.value = "";
     formLng.value = "";
     formItem.value = "";
+    useCurrentLocation.value = false;
   } catch (_) {
     console.log("Error adding bin.");
   }
 }
 
 async function handleSubmit() {
-  if (formLat.value && formLng.value && formItem.value) {
-    const lat = parseFloat(formLat.value);
-    const lng = parseFloat(formLng.value);
-    const item = formItem.value;
-    await addBin(lat, lng, item);
+  let lat: number, lng: number;
+
+  if (useCurrentLocation.value) {
+    lat = userLatitude.value;
+    lng = userLongitude.value;
   } else {
-    console.log("Please fill all fields.");
+    if (!formLat.value || !formLng.value) {
+      console.log("Please fill latitude and longitude fields.");
+      return;
+    }
+    lat = parseFloat(formLat.value);
+    lng = parseFloat(formLng.value);
+  }
+
+  if (formItem.value) {
+    await addBin(lat, lng, formItem.value);
+  } else {
+    console.log("Please fill the item field.");
   }
 }
 
@@ -100,6 +113,16 @@ function toggleContributeForm() {
   showContributeForm.value = !showContributeForm.value;
 }
 
+function toggleCurrentLocation() {
+  useCurrentLocation.value = !useCurrentLocation.value;
+
+  // Reset form fields when toggling
+  if (useCurrentLocation.value) {
+    formLat.value = "";
+    formLng.value = "";
+  }
+}
+
 onBeforeMount(async () => {
   try {
     await getUserLocation();
@@ -113,19 +136,36 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div class="container">
-    <button @click="toggleContributeForm" class="contribute-btn">Contribute a bin location!</button>
+  <div class="container" v-if="loaded">
+    <button @click="toggleContributeForm" class="contribute-btn">
+      {{ showContributeForm ? "Cancel" : "Contribute a bin location!" }}
+    </button>
 
     <form v-if="showContributeForm" @submit.prevent="handleSubmit" class="contribute-form">
       <h2>Add a New Bin</h2>
-      <div>
-        <label for="lat">Latitude:</label>
-        <input id="lat" v-model="formLat" type="text" />
+
+      <div class="current-location-toggle">
+        <button @click="toggleCurrentLocation" :class="{ active: useCurrentLocation }" class="location-toggle-btn">
+          {{ useCurrentLocation ? "Use Coordinates" : "Use Current Location" }}
+        </button>
       </div>
-      <div>
-        <label for="lng">Longitude:</label>
-        <input id="lng" v-model="formLng" type="text" />
+
+      <div v-if="!useCurrentLocation" class="coordinate-inputs">
+        <div>
+          <label for="lat">Latitude:</label>
+          <input id="lat" v-model="formLat" type="text" />
+        </div>
+        <div>
+          <label for="lng">Longitude:</label>
+          <input id="lng" v-model="formLng" type="text" />
+        </div>
       </div>
+
+      <div v-else class="current-location-display">
+        <p>Latitude: {{ userLatitude.toFixed(4) }}</p>
+        <p>Longitude: {{ userLongitude.toFixed(4) }}</p>
+      </div>
+
       <div>
         <label for="item">Item:</label>
         <input id="item" v-model="formItem" type="text" />
@@ -133,19 +173,19 @@ onBeforeMount(async () => {
       <button type="submit">Add Bin</button>
     </form>
 
-    <div v-if="loaded && mapUrl" class="map-section">
+    <div v-if="mapUrl" class="map-section">
       <div class="bin-type-buttons">
         <button @click="handleBinTypeChange('trash')">Get Nearest Trash Bin</button>
         <button @click="handleBinTypeChange('recycle')">Get Nearest Recycle Bin</button>
       </div>
-      <iframe :src="mapUrl" :key="mapUrl" width="600" height="450" style="border: 0" loading="lazy"></iframe>
+      <iframe :src="mapUrl" :key="mapUrl" width="600" height="450" class="map-iframe" loading="lazy"></iframe>
     </div>
-    <div v-else-if="loaded" class="error-message">
-      <p>Geolocation is not supported by this browser.</p>
+    <div v-else class="error-message">
+      <p>Geolocation is not currently enabled or supported by this browser.</p>
     </div>
-    <div v-else class="loading-message">
-      <p>Loading map...</p>
-    </div>
+  </div>
+  <div v-else class="loading-message">
+    <p>Loading...</p>
   </div>
 </template>
 
@@ -180,7 +220,27 @@ onBeforeMount(async () => {
   margin-bottom: 15px;
 }
 
-.contribute-form div {
+.current-location-toggle {
+  margin-bottom: 15px;
+}
+
+.location-toggle-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.location-toggle-btn.active {
+  background-color: black;
+  color: white;
+}
+
+.coordinate-inputs div,
+.contribute-form > div {
   margin-bottom: 10px;
 }
 
@@ -191,10 +251,17 @@ onBeforeMount(async () => {
   margin-right: 10px;
 }
 
-.contribute-form input {
+.contribute-form input[type="text"] {
   padding: 5px;
   font-size: 14px;
   width: 200px;
+}
+
+.current-location-display {
+  margin-bottom: 10px;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 4px;
 }
 
 .bin-type-buttons {
@@ -210,8 +277,11 @@ onBeforeMount(async () => {
   cursor: pointer;
 }
 
-iframe {
+.map-iframe {
   margin-top: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 
 .error-message,
