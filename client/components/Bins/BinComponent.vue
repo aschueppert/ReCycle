@@ -42,6 +42,10 @@ async function getUserLocation() {
       (position) => {
         userLatitude.value = position.coords.latitude;
         userLongitude.value = position.coords.longitude;
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        console.log("user latitude: ", userLatitude.value);
+        console.log("user longitude: ", userLongitude.value);
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
       },
       (error) => {
         console.log("Geolocation error:", error.message);
