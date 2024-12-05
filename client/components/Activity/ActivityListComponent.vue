@@ -4,11 +4,11 @@ import { onBeforeMount, ref, computed } from "vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 
-const { currentUsername } = storeToRefs(useUserStore());
+const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 const loaded = ref(false);
 const activity = ref<Array<Record<string, string>>>([]);
-const friends = ref<Array<Record<string, string>>>([]);
+const friendsActivity = ref<Array<Record<string, string>>>([]);
 const selectedType = ref<"personal" | "friends">("personal");
 
 // Fetch activity data
@@ -22,14 +22,21 @@ async function getActivity() {
   }
 }
 
-// Fetch friends data
-async function getFriends() {
+async function getFriendActivity() {
+  if (!isLoggedIn.value) {
+    return;
+  }
   try {
-    const friendResults = await fetchy(`/api/friends`, "GET", { alert: false });
-    friends.value = friendResults;
-  } catch (error) {
-    console.error("Error fetching friends:", error);
-    friends.value = [];
+    const friends = await fetchy("/api/friends", "GET", {});
+    let friendsActivityResults: Array<Record<string, string>> = [];
+    for (const act of activity.value) {
+      if (friends.includes(act.user)) {
+        friendsActivityResults.push(act);
+      }
+    }
+    friendsActivity.value = friendsActivityResults;
+  } catch (_) {
+    return;
   }
 }
 
@@ -38,15 +45,15 @@ const filteredActivity = computed(() => {
   if (selectedType.value === "personal") {
     return activity.value.filter((act) => act.user === currentUsername.value);
   } else if (selectedType.value === "friends") {
-    const friendIds = friends.value.map((friend) => friend._id);
-    return activity.value.filter((act) => friendIds.includes(act.user));
+    return friendsActivity.value;
   }
   return [];
 });
 
 onBeforeMount(async () => {
   loaded.value = false;
-  await Promise.all([getActivity(), getFriends()]);
+  await getActivity();
+  await getFriendActivity();
   loaded.value = true;
 });
 
