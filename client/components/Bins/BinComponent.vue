@@ -328,36 +328,4 @@ h2 {
   color: #555;
   margin-top: 20px;
 }
-
-.button {
-  font-size: 18px;
-  font-weight: bold;
-  background-color: #ffffff; /* White background */
-  color: #044120;
-  border: 2px solid; /* Solid border */
-  border-color: #044120;
-  border-radius: 40px; /* Rounded corners */
-  padding: 5px 40px; /* Comfortable padding */
-  margin-bottom: 1em;
-  cursor: pointer;
-  user-select: none;
-  transition:
-    background-color 0.3s,
-    transform 0.3s,
-    filter 0.3s,
-    border-color 0.3s; /* Smooth transition for border color */
-}
-.button:hover {
-  transform: scale(1.04); /* Slight scaling on hover */
-  filter: drop-shadow(0px 0px 5px #cccccc); /* Add a shadow on hover */
-  background-color: #e6e6e6;
-  transition:
-    filter 0.3s,
-    transform 0.3s,
-    background-color 0.3s,
-    border-color 0.3s; /* Smooth transition for the shadow effect */
-}
-.button:active {
-  transform: scale(0.96); /* Slight scaling on click */
-}
 </style>
