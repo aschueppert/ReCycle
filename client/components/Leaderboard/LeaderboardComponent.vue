@@ -16,11 +16,22 @@ async function getPoints() {
 
 function getRowClass(index: number) {
   if (index === 0) {
-    return "gold";
+    return "gold medal";
   } else if (index === 1) {
-    return "silver";
+    return "silver medal";
   } else if (index === 2) {
-    return "bronze";
+    return "bronze medal";
+  }
+  return "";
+}
+
+function getMedalEmoji(index: number) {
+  if (index === 0) {
+    return "🥇";
+  } else if (index === 1) {
+    return "🥈";
+  } else if (index === 2) {
+    return "🥉";
   }
   return "";
 }
@@ -37,7 +48,8 @@ onBeforeMount(async () => {
     <div class="points-container">
       <ul v-if="loaded && points.length !== 0">
         <li v-for="(user, index) in points" :key="user.item" :class="getRowClass(index)">
-          <span class="rank">#{{ index + 1 }}</span>
+          <span class="rank medal-emoji" v-if="index < 3">{{ getMedalEmoji(index) }}</span>
+          <span class="rank" v-else>#{{ index + 1 }}</span>
           <span class="username">{{ user.item }}</span>
           <span class="points">{{ user.value }} pts</span>
         </li>
@@ -97,6 +109,14 @@ li:last-child {
   color: #333;
 }
 
+.medal {
+  font-size: 1.2rem;
+}
+
+.medal-emoji {
+  text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.75);
+}
+
 .username {
   flex-grow: 1;
   margin-left: 10px;
@@ -115,19 +135,19 @@ p {
 
 .gold {
   background-color: #ffdc1f;
-  font-weight: 700;
+  font-weight: 550;
   border-radius: 4px;
 }
 
 .silver {
   background-color: #c3c3c3;
-  font-weight: 700;
+  font-weight: 550;
   border-radius: 4px;
 }
 
 .bronze {
-  background-color: #d18942;
-  font-weight: 700;
+  background-color: #d38f4c;
+  font-weight: 550;
   border-radius: 4px;
 }
 </style>
