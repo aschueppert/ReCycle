@@ -1,6 +1,11 @@
 <script setup lang="ts">
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
+
+const userStore = useUserStore();
+const { isLoggedIn } = storeToRefs(userStore);
 
 const GOOGLE_MAP_API_KEY = "AIzaSyDqYZHShrNYA5aDPkiOfq2I5iEOcUBUKnw";
 
@@ -20,6 +25,7 @@ const mapUrl = ref("");
 const formLat = ref("");
 const formLng = ref("");
 const formItem = ref("");
+const formError = ref("");
 
 function updateMapUrl() {
   if (mapMode.value === "view") {
@@ -70,26 +76,24 @@ async function addBin(lat: number, lng: number, item: string) {
   }
 }
 
-async function handleSubmit() {
+async function submitBin(type: "trash" | "recycle") {
   let lat: number, lng: number;
+
+  formError.value = "";
 
   if (useCurrentLocation.value) {
     lat = userLatitude.value;
     lng = userLongitude.value;
   } else {
-    if (!formLat.value || !formLng.value) {
-      console.log("Please fill latitude and longitude fields.");
+    if (!formLat.value || isNaN(parseFloat(formLat.value)) || !formLng.value || isNaN(parseFloat(formLng.value))) {
+      formError.value = "Please provide valid latitude and longitude values.";
       return;
     }
     lat = parseFloat(formLat.value);
     lng = parseFloat(formLng.value);
   }
 
-  if (formItem.value) {
-    await addBin(lat, lng, formItem.value);
-  } else {
-    console.log("Please fill the item field.");
-  }
+  await addBin(lat, lng, type);
 }
 
 async function getNearestBin() {
@@ -137,11 +141,11 @@ onBeforeMount(async () => {
 
 <template>
   <div class="container" v-if="loaded">
-    <button @click="toggleContributeForm" class="contribute-btn">
+    <button @click="toggleContributeForm" class="contribute-btn" v-if="isLoggedIn">
       {{ showContributeForm ? "Cancel" : "Contribute a bin location!" }}
     </button>
 
-    <form v-if="showContributeForm" @submit.prevent="handleSubmit" class="contribute-form">
+    <form v-if="showContributeForm && isLoggedIn" class="contribute-form">
       <h2>Add a New Bin</h2>
 
       <div class="current-location-toggle">
@@ -166,11 +170,12 @@ onBeforeMount(async () => {
         <p>Longitude: {{ userLongitude.toFixed(4) }}</p>
       </div>
 
-      <div>
-        <label for="item">Item:</label>
-        <input id="item" v-model="formItem" type="text" />
+      <div class="bin-type-buttons">
+        <button @click.prevent="submitBin('trash')">Add Trash Bin</button>
+        <button @click.prevent="submitBin('recycle')">Add Recycle Bin</button>
       </div>
-      <button type="submit">Add Bin</button>
+
+      <p v-if="formError" class="form-error-message">{{ formError }}</p>
     </form>
 
     <div v-if="mapUrl" class="map-section">
