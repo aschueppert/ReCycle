@@ -21,50 +21,31 @@ const formItem = ref("");
 
 function updateMapUrl() {
   if (mapMode.value === "view") {
-    mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&center=${userLatitude.value},${userLongitude.value}&zoom=5`;
+    mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&center=${userLatitude.value},${userLongitude.value}&zoom=17`;
   } else {
-    mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&origin=${userLatitude.value},${userLongitude.value}&destination=${destinationLatitude.value},${destinationLongitude.value}&zoom=5`;
+    mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&origin=${userLatitude.value},${userLongitude.value}&destination=${destinationLatitude.value},${destinationLongitude.value}`;
   }
-  console.log("===============================================================");
-  console.log("user latitude: ", userLatitude.value);
-  console.log("user longitude: ", userLongitude.value);
-  console.log("destination latitude: ", destinationLatitude.value);
-  console.log("destination longitude: ", destinationLongitude.value);
-  console.log("bin type: ", binType.value);
-  console.log("map mode: ", mapMode.value);
-  console.log("map url: ", mapUrl.value);
-  console.log("==============================================================");
-}
-
-function userLocationSuccess(pos: { coords: { latitude: number; longitude: number } }) {
-  userLatitude.value = pos.coords.latitude;
-  userLongitude.value = pos.coords.longitude;
-  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-  console.log("user latitude: ", userLatitude.value);
-  console.log("user longitude: ", userLongitude.value);
-  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-}
-
-function userLocationError(err: { message: any }) {
-  console.log("Geolocation error:", err.message);
 }
 
 async function getUserLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(userLocationSuccess, userLocationError);
-  } else {
-    console.log("Geolocation is not supported by this browser.");
-  }
-}
-
-async function getNearestBin() {
-  try {
-    const result = await fetchy(`/api/bin/${userLatitude.value}/${userLongitude.value}/${binType.value}`, "GET", {});
-    destinationLatitude.value = result.lat;
-    destinationLongitude.value = result.lng;
-  } catch (_) {
-    console.log("Error fetching nearest bin.");
-  }
+  return new Promise<void>((resolve, reject) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          userLatitude.value = pos.coords.latitude;
+          userLongitude.value = pos.coords.longitude;
+          resolve();
+        },
+        (err) => {
+          console.log("Geolocation error:", err.message);
+          reject(err);
+        },
+      );
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+      reject(new Error("Geolocation not supported"));
+    }
+  });
 }
 
 async function addBin(lat: number, lng: number, item: string) {
@@ -96,35 +77,42 @@ async function handleSubmit() {
   }
 }
 
-async function locateBin() {
+async function getNearestBin() {
+  try {
+    const result = await fetchy(`/api/bin/${userLatitude.value}/${userLongitude.value}/${binType.value}`, "GET", {});
+    destinationLatitude.value = result.lat;
+    destinationLongitude.value = result.lng;
+  } catch (_) {
+    console.log("Error fetching nearest bin.");
+  }
+}
+
+async function handleBinTypeChange(type: "trash" | "recycle") {
+  binType.value = type;
   await getNearestBin();
   mapMode.value = "directions";
   await updateMapUrl();
 }
 
-async function handleBinTypeChange(type: "trash" | "recycle") {
-  binType.value = type;
-  await locateBin();
-}
-
 onBeforeMount(async () => {
-  await getUserLocation();
-  updateMapUrl();
-  loaded.value = true;
+  try {
+    await getUserLocation();
+    updateMapUrl();
+    loaded.value = true;
+  } catch (error) {
+    console.log("Error during setup:", error);
+    loaded.value = true;
+  }
 });
 </script>
 
 <template>
-  <div v-if="loaded">
+  <div v-if="loaded && mapUrl">
     <div>
       <button @click="handleBinTypeChange('trash')">Get Nearest Trash Bin</button>
       <button @click="handleBinTypeChange('recycle')">Get Nearest Recycle Bin</button>
     </div>
-    <p>User Latitude: {{ userLatitude }}</p>
-    <p>User Longitude: {{ userLongitude }}</p>
-    <p>Destination Latitude: {{ destinationLatitude }}</p>
-    <p>Destination Longitude: {{ destinationLongitude }}</p>
-    <iframe :src="mapUrl" width="600" height="450" style="border: 0" loading="lazy"></iframe>
+    <iframe :src="mapUrl" :key="mapUrl" width="600" height="450" style="border: 0" loading="lazy"></iframe>
 
     <h2>Add a New Bin</h2>
     <form @submit.prevent="handleSubmit">
@@ -143,8 +131,11 @@ onBeforeMount(async () => {
       <button type="submit">Add Bin</button>
     </form>
   </div>
+  <div v-else-if="loaded">
+    <p>Geolocation is not supported by this browser.</p>
+  </div>
   <div v-else>
-    <p>Loading...</p>
+    <p>Loading map...</p>
   </div>
 </template>
 
