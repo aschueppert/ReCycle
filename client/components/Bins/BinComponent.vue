@@ -5,15 +5,14 @@ const GOOGLE_MAP_API_KEY = "AIzaSyDqYZHShrNYA5aDPkiOfq2I5iEOcUBUKnw";
 
 const loaded = ref(false);
 
-const latitude = ref(42.358212); // Default latitude
-const longitude = ref(71.090248); // Default longitude
 const mapMode = ref<"view" | "directions">("view");
-const mapUrl = ref(`https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&center=${latitude.value},${longitude.value}`);
+const latitude = ref(0); // Default latitude
+const longitude = ref(0); // Default longitude
 
-async function updateMapUrl() {
+const mapUrl = ref("");
+
+function updateMapUrl() {
   mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&center=${latitude.value},${longitude.value}`;
-  console.log("Map URL updated");
-  console.log(mapUrl.value);
 }
 
 async function getUserLocation() {
@@ -34,21 +33,20 @@ async function getUserLocation() {
 
 onBeforeMount(async () => {
   await getUserLocation();
-  await updateMapUrl();
+  updateMapUrl();
   loaded.value = true;
 });
 </script>
 
 <template>
   <div v-if="loaded">
-    <h2>User Location:</h2>
+    <h2>User Coordinates:</h2>
     <p>Latitude: {{ latitude }}</p>
     <p>Longitude: {{ longitude }}</p>
     <iframe :src="mapUrl" width="600" height="450" style="border: 0" loading="lazy"></iframe>
   </div>
   <div v-else>
     <p>Loading...</p>
-    <iframe :src="mapUrl" width="600" height="450" style="border: 0" loading="lazy"></iframe>
   </div>
 </template>
 
