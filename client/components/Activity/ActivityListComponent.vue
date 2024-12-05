@@ -69,7 +69,7 @@ const switchActivityType = (type: "personal" | "friends") => {
       <div v-if="loaded && filteredActivity.length !== 0">
         <ul class="activity-items">
           <li v-for="act in filteredActivity" :key="act._id">
-            <strong>{{ act.type }}:</strong> {{ act.item }}
+            {{ act.user }} classified <strong>{{ act.type }}</strong> at {{ act.dateCreated }}
           </li>
         </ul>
       </div>
