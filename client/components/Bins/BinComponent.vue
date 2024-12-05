@@ -1,26 +1,30 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from "vue";
+import { fetchy } from "../../utils/fetchy";
 
 const GOOGLE_MAP_API_KEY = "AIzaSyDqYZHShrNYA5aDPkiOfq2I5iEOcUBUKnw";
 
 const loaded = ref(false);
 
-const mapMode = ref<"view" | "directions">("view");
-const latitude = ref(0); // Default latitude
-const longitude = ref(0); // Default longitude
+const userLatitude = ref(0); // Default latitude
+const userLongitude = ref(0); // Default longitude
+const destinationLatitude = ref(0); // Default latitude
+const destinationLongitude = ref(0); // Default longitude
 
+const binType = ref<"trash" | "recycle">("trash");
+const mapMode = ref<"view" | "directions">("view");
 const mapUrl = ref("");
 
-function updateMapUrl() {
-  mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&center=${latitude.value},${longitude.value}`;
+async function updateMapUrl() {
+  mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&center=${userLatitude.value},${userLongitude.value}`;
 }
 
 async function getUserLocation() {
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        latitude.value = position.coords.latitude;
-        longitude.value = position.coords.longitude;
+        userLatitude.value = position.coords.latitude;
+        userLongitude.value = position.coords.longitude;
       },
       (error) => {
         console.log("Geolocation error:", error.message);
@@ -31,9 +35,25 @@ async function getUserLocation() {
   }
 }
 
+async function getNearestBin() {
+  try {
+    const result = await fetchy(`/api/bin/${userLatitude.value}/${userLongitude.value}/${binType.value}`, "GET", {});
+    destinationLatitude.value = result.lat;
+    destinationLongitude.value = result.lng;
+  } catch (_) {
+    return;
+  }
+}
+
+async function locateBin() {
+  await getNearestBin();
+  mapMode.value = "directions";
+  await updateMapUrl();
+}
+
 onBeforeMount(async () => {
   await getUserLocation();
-  updateMapUrl();
+  await updateMapUrl();
   loaded.value = true;
 });
 </script>
@@ -41,8 +61,8 @@ onBeforeMount(async () => {
 <template>
   <div v-if="loaded">
     <h2>User Coordinates:</h2>
-    <p>Latitude: {{ latitude }}</p>
-    <p>Longitude: {{ longitude }}</p>
+    <p>Latitude: {{ userLatitude }}</p>
+    <p>Longitude: {{ userLongitude }}</p>
     <iframe :src="mapUrl" width="600" height="450" style="border: 0" loading="lazy"></iframe>
   </div>
   <div v-else>
