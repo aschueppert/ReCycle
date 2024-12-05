@@ -64,9 +64,8 @@ onBeforeMount(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 20px;
   font-family: Arial, sans-serif;
-  font-size: 16px;
-  color: #333;
 }
 
 .request-items {
@@ -77,15 +76,39 @@ onBeforeMount(async () => {
 }
 
 .request-items li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 10px;
   margin: 5px 0;
-  text-align: center;
+  background-color: #f9fdfb;
+  border: 1px solid #d4e8dc;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Button styles */
+button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(45deg, #6bbe92, #3aa76d, #1f7a4d);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: linear-gradient(45deg, #3aa76d, #1f7a4d, #6bbe92);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
 .no-requests,
 .loading-text {
-  margin-top: 20px;
   color: #999;
+  text-align: center;
   font-size: 14px;
 }
 </style>

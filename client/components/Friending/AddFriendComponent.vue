@@ -61,3 +61,76 @@ const sendRequest = async (username: string) => {
     <p v-else-if="searchQuery.trim()">No results found</p>
   </div>
 </template>
+
+<style scoped>
+/* Container styling */
+div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+h2 {
+  font-size: 20px;
+  color: #3aa76d;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* Input styling */
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d4e8dc;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #3aa76d;
+  box-shadow: 0 0 5px rgba(58, 167, 109, 0.5);
+}
+
+/* Search results */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #d4e8dc;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  background-color: #f9fdfb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Buttons */
+button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(45deg, #6bbe92, #3aa76d, #1f7a4d);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: linear-gradient(45deg, #3aa76d, #1f7a4d, #6bbe92);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+p {
+  color: #999;
+  text-align: center;
+}
+</style>

@@ -10,7 +10,6 @@ import LeaderboardComponent from "@/components/Leaderboard/LeaderboardComponent.
         <CameraFeed />
       </div>
     </section>
-    <LeaderboardComponent />
   </main>
 </template>
 

@@ -13,6 +13,7 @@ import SettingView from "../views/SettingView.vue";
 import AddFriendView from "../views/AddFriendView.vue";
 import FriendsView from "../views/FriendsView.vue";
 import ActivityListComponent from "../components/Activity/ActivityListComponent.vue";
+import SocialView from "../views/SocialView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -82,6 +83,11 @@ const router = createRouter({
       path: "/activity",
       name: "Activity",
       component: ActivityListComponent,
+    },
+    {
+      path: "/social",
+      name: "Social",
+      component: SocialView,
     },
   ],
 });
