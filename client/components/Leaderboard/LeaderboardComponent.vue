@@ -61,7 +61,11 @@ function getMedalEmoji(index: number) {
 }
 
 function toggleMode(mode: "all" | "friends") {
-  selectedMode.value = mode;
+  if (!isLoggedIn.value) {
+    selectedMode.value = "all";
+  } else {
+    selectedMode.value = mode;
+  }
 }
 
 onBeforeMount(async () => {
@@ -74,7 +78,7 @@ onBeforeMount(async () => {
 <template>
   <div class="leaderboard">
     <h2>Leaderboard</h2>
-    <div class="toggle-container">
+    <div class="toggle-container" v-if="isLoggedIn">
       <button :class="['mode-button', { selected: selectedMode === 'all' }]" @click="toggleMode('all')">All Users</button>
       <button :class="['mode-button', { selected: selectedMode === 'friends' }]" @click="toggleMode('friends')">Friends Only</button>
     </div>
