@@ -1,29 +1,37 @@
-<script>
+<script setup lang="ts">
 import { fetchy } from "@/utils/fetchy";
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 
-const points = ref();
+const loaded = ref(false);
+const points = ref<Array<Record<string, string>>>([]);
 
 async function getPoints() {
   try {
-    const pointsResults = await fetchy(`/api/points/all`, "GET", {});
+    const pointsResults = await fetchy("/api/points/all", "GET", {});
     points.value = pointsResults;
   } catch (_) {
-    points.value = [];
+    return;
   }
 }
+
+onBeforeMount(async () => {
+  await getPoints();
+  loaded.value = true;
+});
 </script>
 
 <template>
   <div class="leaderboard">
     <h2>Leaderboard</h2>
-    <ul>
+    <ul v-if="loaded && points.length !== 0">
       <li v-for="(user, index) in points" :key="user.item">
         <span class="rank">{{ index + 1 }}.</span>
         <span class="username">{{ user.item }}</span>
         <span class="points">{{ user.value }} pts</span>
       </li>
     </ul>
+    <p v-else-if="loaded">No data found</p>
+    <p v-else>Loading...</p>
   </div>
 </template>
 
