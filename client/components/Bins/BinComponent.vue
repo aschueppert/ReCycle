@@ -19,7 +19,7 @@ const formLat = ref("");
 const formLng = ref("");
 const formItem = ref("");
 
-async function updateMapUrl() {
+function updateMapUrl() {
   if (mapMode.value === "view") {
     mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&center=${userLatitude.value},${userLongitude.value}&zoom=5`;
   } else {
@@ -36,23 +36,24 @@ async function updateMapUrl() {
   console.log("==============================================================");
 }
 
+function userLocationSuccess(pos: { coords: { latitude: number; longitude: number } }) {
+  userLatitude.value = pos.coords.latitude;
+  userLongitude.value = pos.coords.longitude;
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+  console.log("user latitude: ", userLatitude.value);
+  console.log("user longitude: ", userLongitude.value);
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+}
+
+function userLocationError(err: { message: any }) {
+  console.log("Geolocation error:", err.message);
+}
+
 async function getUserLocation() {
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        userLatitude.value = position.coords.latitude;
-        userLongitude.value = position.coords.longitude;
-        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        console.log("user latitude: ", userLatitude.value);
-        console.log("user longitude: ", userLongitude.value);
-        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-      },
-      (error) => {
-        console.log("Geolocation error:", error.message);
-      },
-    );
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(userLocationSuccess, userLocationError);
   } else {
-    console.log("Geolocation not supported");
+    console.log("Geolocation is not supported by this browser.");
   }
 }
 
@@ -108,7 +109,7 @@ async function handleBinTypeChange(type: "trash" | "recycle") {
 
 onBeforeMount(async () => {
   await getUserLocation();
-  await updateMapUrl();
+  updateMapUrl();
   loaded.value = true;
 });
 </script>
