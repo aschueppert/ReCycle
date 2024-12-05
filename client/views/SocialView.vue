@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import LeaderboardComponent from "@/components/Leaderboard/LeaderboardComponent.vue";
 import ActivityListComponent from "@/components/Activity/ActivityListComponent.vue";
+import LeaderboardComponent from "@/components/Leaderboard/LeaderboardComponent.vue";
+import { ref } from "vue";
 
 // State to manage the selected view
 const selectedView = ref<"leaderboard" | "activityList">("leaderboard");
@@ -60,7 +60,7 @@ const switchView = (view: "leaderboard" | "activityList") => {
 }
 
 .toggle-buttons button.active {
-  background: linear-gradient(45deg, #6bbe92, #3aa76d, #1f7a4d);
+  background: linear-gradient(45deg, #55c58a, #44b076, #3caf72);
   color: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }

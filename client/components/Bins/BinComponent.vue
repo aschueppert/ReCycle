@@ -117,7 +117,8 @@ function toggleContributeForm() {
   showContributeForm.value = !showContributeForm.value;
 }
 
-function toggleCurrentLocation() {
+function toggleCurrentLocation(event: Event) {
+  event.preventDefault(); // Prevent accidental form submission
   useCurrentLocation.value = !useCurrentLocation.value;
 
   // Reset form fields when toggling
@@ -141,7 +142,7 @@ onBeforeMount(async () => {
 
 <template>
   <div class="container" v-if="loaded">
-    <button @click="toggleContributeForm" class="contribute-btn" v-if="isLoggedIn">
+    <button @click="toggleContributeForm" class="button" v-if="isLoggedIn">
       {{ showContributeForm ? "Cancel" : "Contribute a bin location!" }}
     </button>
 
@@ -149,7 +150,7 @@ onBeforeMount(async () => {
       <h2>Add a New Bin</h2>
 
       <div class="current-location-toggle">
-        <button @click="toggleCurrentLocation" :class="{ active: useCurrentLocation }" class="location-toggle-btn">
+        <button @click="toggleCurrentLocation($event)" :class="{ active: useCurrentLocation }" class="button">
           {{ useCurrentLocation ? "Use Coordinates" : "Use Current Location" }}
         </button>
       </div>
@@ -171,8 +172,8 @@ onBeforeMount(async () => {
       </div>
 
       <div class="bin-type-buttons">
-        <button @click.prevent="submitBin('trash')">Add Trash Bin</button>
-        <button @click.prevent="submitBin('recycle')">Add Recycle Bin</button>
+        <button class="button" @click.prevent="submitBin('trash')">Add Trash Bin</button>
+        <button class="button" @click.prevent="submitBin('recycle')">Add Recycle Bin</button>
       </div>
 
       <p v-if="formError" class="form-error-message">{{ formError }}</p>
@@ -180,8 +181,8 @@ onBeforeMount(async () => {
 
     <div v-if="mapUrl" class="map-section">
       <div class="bin-type-buttons">
-        <button @click="handleBinTypeChange('trash')">Get Nearest Trash Bin</button>
-        <button @click="handleBinTypeChange('recycle')">Get Nearest Recycle Bin</button>
+        <button class="button" @click="handleBinTypeChange('trash')">Get Nearest Trash Bin</button>
+        <button class="button" @click="handleBinTypeChange('recycle')">Get Nearest Recycle Bin</button>
       </div>
       <iframe :src="mapUrl" :key="mapUrl" width="600" height="450" class="map-iframe" loading="lazy"></iframe>
     </div>
@@ -203,94 +204,160 @@ onBeforeMount(async () => {
   margin: 0 auto;
   padding: 20px;
   text-align: center;
+  border-radius: 12px;
+}
+
+h2 {
+  color: #044120;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 .contribute-btn {
-  margin-bottom: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(45deg, #55c58a, #44b076, #3caf72);
+  border: none;
+  border-radius: 25px;
   cursor: pointer;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease;
+}
+
+.contribute-btn:hover {
+  background: linear-gradient(45deg, #3caf72, #44b076, #55c58a);
+  transform: translateY(-3px);
 }
 
 .contribute-form {
   width: 100%;
   max-width: 400px;
   margin-bottom: 20px;
-  padding: 20px;
+  padding: 0px 40px;
   border: 1px solid #ddd;
+  border-radius: 15px;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.contribute-form input[type="text"] {
+  margin: 0 auto; /* Center-align the inputs */
+}
+
+.coordinate-inputs div,
+.contribute-form > div {
+  margin-bottom: 15px;
+}
+
+.contribute-form label {
+  display: block;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.contribute-form input[type="text"] {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  font-size: 16px;
+  width: 100%;
+  border: 1px solid #ccc;
   border-radius: 8px;
 }
 
-.contribute-form h2 {
+.current-location-display {
+  background-color: #f9fff9;
+  padding: 10px;
+  border: 1px solid #44b076;
+  border-radius: 8px;
   margin-bottom: 15px;
-}
-
-.current-location-toggle {
-  margin-bottom: 15px;
+  color: #333;
 }
 
 .location-toggle-btn {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin: 10px 0;
+  background: linear-gradient(45deg, #55c58a, #44b076, #3caf72);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease;
 }
 
 .location-toggle-btn.active {
-  background-color: black;
-  color: white;
+  background: #44b076;
 }
 
-.coordinate-inputs div,
-.contribute-form > div {
-  margin-bottom: 10px;
-}
-
-.contribute-form label {
-  display: inline-block;
-  width: 100px;
-  text-align: right;
-  margin-right: 10px;
-}
-
-.contribute-form input[type="text"] {
-  padding: 5px;
-  font-size: 14px;
-  width: 200px;
-}
-
-.current-location-display {
-  margin-bottom: 10px;
-  background-color: #f0f0f0;
-  padding: 10px;
-  border-radius: 4px;
+.location-toggle-btn:hover {
+  transform: scale(1.05);
 }
 
 .bin-type-buttons {
   display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 20px;
 }
 
-.bin-type-buttons button {
-  margin: 0 10px;
-  padding: 10px;
-  font-size: 16px;
-  cursor: pointer;
+.map-section iframe {
+  margin-top: 10px;
+  border: none;
+  width: 100%;
+  height: 450px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.map-iframe {
-  margin-top: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ddd;
-  border-radius: 8px;
+.form-error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
 }
 
 .error-message,
 .loading-message {
   text-align: center;
+  font-size: 18px;
+  color: #555;
+  margin-top: 20px;
+}
+
+.button {
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #ffffff; /* White background */
+  color: #044120;
+  border: 2px solid; /* Solid border */
+  border-color: #044120;
+  border-radius: 40px; /* Rounded corners */
+  padding: 5px 40px; /* Comfortable padding */
+  margin-bottom: 1em;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color 0.3s,
+    transform 0.3s,
+    filter 0.3s,
+    border-color 0.3s; /* Smooth transition for border color */
+}
+.button:hover {
+  transform: scale(1.04); /* Slight scaling on hover */
+  filter: drop-shadow(0px 0px 5px #cccccc); /* Add a shadow on hover */
+  background-color: #e6e6e6;
+  transition:
+    filter 0.3s,
+    transform 0.3s,
+    background-color 0.3s,
+    border-color 0.3s; /* Smooth transition for the shadow effect */
+}
+.button:active {
+  transform: scale(0.96); /* Slight scaling on click */
 }
 </style>
