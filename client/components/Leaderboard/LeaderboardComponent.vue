@@ -114,7 +114,9 @@ onBeforeMount(async () => {
 
 .toggle-container {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  gap: 15px; /* Space between the buttons */
+  margin-bottom: 20px; /* Space between toggle container and list */
 }
 
 .mode-button {
