@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { fetchy } from "@/utils/fetchy";
-import { onBeforeMount, ref } from "vue";
 import { useUserStore } from "@/stores/user";
+import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
+import { onBeforeMount, ref } from "vue";
 
 const { currentUsername } = storeToRefs(useUserStore());
 
@@ -44,11 +44,13 @@ onBeforeMount(async () => {
 <template>
   <div class="friendrequests-list">
     <div v-if="loaded && friendRequests.length !== 0">
-      <ul class="request-items">
+      <ul class="friendrequest-items">
         <li v-for="friendRequest in friendRequests" :key="friendRequest._id">
-          {{ friendRequest.from }}
-          <button class="message-button" @click="acceptRequest(friendRequest.from)">Accept</button>
-          <button class="message-button" @click="rejectRequest(friendRequest.from)">Reject</button>
+          <span class="request-name">{{ friendRequest.from }}</span>
+          <div class="request-buttons">
+            <button class="button" @click="acceptRequest(friendRequest.from)">Accept</button>
+            <button class="button" @click="rejectRequest(friendRequest.from)">Reject</button>
+          </div>
         </li>
       </ul>
     </div>
@@ -61,54 +63,24 @@ onBeforeMount(async () => {
 
 <style scoped>
 .friendrequests-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  font-family: Arial, sans-serif;
+  text-align: center;
+  font-size: 16px;
+  color: #044120;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
 }
-
-.request-items {
+.friendrequest-items {
   list-style: none;
   padding: 0;
   margin: 0;
   width: 100%;
 }
 
-.request-items li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  margin: 5px 0;
-  background-color: #f9fdfb;
-  border: 1px solid #d4e8dc;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.no-requests {
+  color: #044120;
 }
-
-/* Button styles */
-button {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 20px;
-  background: linear-gradient(45deg, #6bbe92, #3aa76d, #1f7a4d);
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-button:hover {
-  background: linear-gradient(45deg, #3aa76d, #1f7a4d, #6bbe92);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-}
-
-.no-requests,
 .loading-text {
-  color: #999;
-  text-align: center;
-  font-size: 14px;
+  color: #044120;
 }
 </style>

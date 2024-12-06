@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { fetchy } from "@/utils/fetchy";
-import { onBeforeMount, ref } from "vue";
 import { useUserStore } from "@/stores/user";
+import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
+import { onBeforeMount, ref } from "vue";
 
 const { currentUsername } = storeToRefs(useUserStore());
 
@@ -43,12 +43,9 @@ onBeforeMount(async () => {
 
 <style scoped>
 .friends-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: Arial, sans-serif;
+  text-align: center;
   font-size: 16px;
-  color: #333;
+  color: #044120;
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
@@ -59,48 +56,12 @@ onBeforeMount(async () => {
   padding: 0;
   margin: 0;
   width: 100%;
-  border: 1px solid #d4e8dc;
-  border-radius: 10px;
-  overflow: hidden;
-  background: #f9fdfb;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
-.friend-items li {
-  padding: 10px 20px;
-  margin: 0;
-  border-bottom: 1px solid #d4e8dc;
-  background: #ffffff;
-  transition: all 0.3s ease;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #3aa76d;
-  font-weight: bold;
-}
-
-.friend-items li:last-child {
-  border-bottom: none;
-}
-
-.friend-items li:hover {
-  background: linear-gradient(45deg, #6bbe92, #3aa76d, #1f7a4d);
-  color: white;
-  cursor: pointer;
-}
-
-.no-friends,
-.loading-text {
-  margin-top: 20px;
-  color: #999;
-  font-size: 14px;
-}
-
 .no-friends {
-  color: #6bbe92;
+  color: #044120;
 }
 
 .loading-text {
-  color: #3aa76d;
+  color: #044120;
 }
 </style>
