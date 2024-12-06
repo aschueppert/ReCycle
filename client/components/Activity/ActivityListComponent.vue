@@ -109,7 +109,6 @@ const switchActivityType = (type: "personal" | "friends") => {
 
 <style scoped>
 .activity-container {
-  font-family: "Arial", sans-serif;
   max-width: 600px;
   margin: 0 auto;
   padding: 1rem;

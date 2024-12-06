@@ -45,6 +45,7 @@ onBeforeMount(async () => {
 .friends-list {
   text-align: center;
   font-size: 16px;
+  font-family: var(--base-font);
   color: #044120;
   width: 100%;
   max-width: 600px;
@@ -52,16 +53,19 @@ onBeforeMount(async () => {
 }
 
 .friend-items {
+  font-family: var(--base-font);
   list-style: none;
   padding: 0;
   margin: 0;
   width: 100%;
 }
 .no-friends {
+  font-family: var(--base-font);
   color: #044120;
 }
 
 .loading-text {
+  font-family: var(--base-font);
   color: #044120;
 }
 </style>

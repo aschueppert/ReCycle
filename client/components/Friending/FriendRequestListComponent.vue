@@ -63,6 +63,7 @@ onBeforeMount(async () => {
 
 <style scoped>
 .friendrequests-list {
+  font-family: var(--base-font);
   text-align: center;
   font-size: 16px;
   color: #044120;
@@ -72,6 +73,7 @@ onBeforeMount(async () => {
 }
 
 .friendrequest-items {
+  font-family: var(--base-font);
   list-style: none;
   padding: 0;
   margin: 0;
@@ -79,6 +81,7 @@ onBeforeMount(async () => {
 }
 
 .friendrequest-items li {
+  font-family: var(--base-font);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -86,20 +89,24 @@ onBeforeMount(async () => {
 }
 
 .request-name {
+  font-family: var(--base-font);
   text-align: left;
   flex: 1; /* Take up the remaining space */
 }
 
 .request-buttons {
+  font-family: var(--base-font);
   display: flex;
   gap: 10px; /* Small gap between buttons */
 }
 
 .no-requests {
+  font-family: var(--base-font);
   color: #044120;
 }
 
 .loading-text {
+  font-family: var(--base-font);
   color: #044120;
 }
 </style>

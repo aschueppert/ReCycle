@@ -26,13 +26,17 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
       <FriendRequestListComponent />
     </div>
   </div>
-  <div class="friends-view">
+  <div class="friends-view last-view">
     <h1>Add Friends</h1>
     <AddFriendComponent />
   </div>
 </template>
 
 <style scoped>
+.last-view {
+  padding-bottom: 2em;
+}
+
 /* Container styling */
 .friends-view {
   max-width: 800px;

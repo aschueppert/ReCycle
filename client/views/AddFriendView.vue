@@ -22,7 +22,6 @@ import FriendRequestListComponent from "@/components/Friending/FriendRequestList
   display: flex;
   flex-direction: column;
   gap: 20px;
-  font-family: Arial, sans-serif;
   background: linear-gradient(45deg, #f9fdfb, #e6f7f0);
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

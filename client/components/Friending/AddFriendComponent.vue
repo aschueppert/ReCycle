@@ -50,12 +50,11 @@ const sendRequest = async (username: string) => {
 
 <template>
   <div>
-    <h2>Search for Friends</h2>
     <input v-model="searchQuery" @input="filterUsers" type="text" placeholder="Search for a username" />
     <ul v-if="searchResults.length">
       <li v-for="user in searchResults" :key="user.username">
         <span>{{ user.username }}</span>
-        <button @click="sendRequest(user.username)">Add Friend</button>
+        <button class="button" @click="sendRequest(user.username)">Add Friend</button>
       </li>
     </ul>
     <p v-else-if="searchQuery.trim()">No results found</p>
@@ -65,72 +64,80 @@ const sendRequest = async (username: string) => {
 <style scoped>
 /* Container styling */
 div {
+  font-family: var(--base-font);
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
 h2 {
+  font-family: var(--base-font);
   font-size: 20px;
   color: #3aa76d;
   text-align: center;
   margin-bottom: 10px;
 }
 
-/* Input styling */
-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #d4e8dc;
-  border-radius: 20px;
-  font-size: 14px;
+/* Style for the input */
+input[type="text"],
+input[type="password"] {
+  font-family: var(--base-font);
+  padding: 0.5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  border-radius: 15px; /* Rounded corners */
+  border: 2px solid #000000; /* Black border */
+  color: #044120;
+  font-size: 1em;
+  resize: none;
   outline: none;
+  margin-right: 0.5em;
+  border-color: #000000; /* Black border */
+  transition:
+    box-shadow 0.3s,
+    border-color 0.3s; /* Smooth transition for border color */
 }
 
-input:focus {
-  border-color: #3aa76d;
-  box-shadow: 0 0 5px rgba(58, 167, 109, 0.5);
+/* Focus effect for input */
+input[type="text"]:focus,
+input[type="password"]:focus {
+  font-family: var(--base-font);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5); /* Smooth outer glow effect */
+  border-color: #044120; /* Change color on focus */
+  transition:
+    box-shadow 0.3s,
+    border-color 0.3s; /* Smooth transition for the shadow effect */
+}
+
+input:required:invalid {
+  font-family: var(--base-font);
+  color: black;
 }
 
 /* Search results */
 ul {
+  font-family: var(--base-font);
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
 li {
+  font-family: var(--base-font);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  border: 1px solid #d4e8dc;
-  border-radius: 10px;
+  padding-left: 1em;
+  padding-right: 1em;
+  border-bottom: 1px solid #044120;
   margin-bottom: 10px;
-  background-color: #f9fdfb;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Buttons */
-button {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 20px;
-  background: linear-gradient(45deg, #6bbe92, #3aa76d, #1f7a4d);
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-button:hover {
-  background: linear-gradient(45deg, #3aa76d, #1f7a4d, #6bbe92);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-}
 
 p {
-  color: #999;
+  font-family: var(--base-font);
+  color: #044120;
   text-align: center;
 }
 </style>
