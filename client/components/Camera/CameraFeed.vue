@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { fetchy } from "@/utils/fetchy";
 import axios from "axios";
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import { fetchy } from "@/utils/fetchy";
 
 const videoRef = ref<HTMLVideoElement | null>(null);
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -63,7 +63,7 @@ const classifyImage = async (image: File): Promise<string> => {
     const result = predictedClass.toLowerCase() === "other" ? "Trash" : "Recycle";
     try {
       const body: Record<string, string> = { type: result };
-      await fetchy(`/api/classify`, "POST", { body });
+      await fetchy(`/api/classify`, "POST", { body, alert: false });
     } catch (error) {
       console.error("Error saving classification:", error);
     }
@@ -72,7 +72,7 @@ const classifyImage = async (image: File): Promise<string> => {
     console.error("Error classifying image: ", error);
     try {
       const body: Record<string, string> = { type: "Trash" };
-      await fetchy(`/api/classify`, "POST", { body });
+      await fetchy(`/api/classify`, "POST", { body, alert: false });
     } catch (error) {
       console.error("Error saving classification:", error);
     }
@@ -121,7 +121,7 @@ onBeforeUnmount(() => {
   >
     <div class="camera-section">
       <div class="classify-section">
-        <button @click="handleClassify">Classify</button>
+        <button class="button" @click="handleClassify">Classify</button>
 
         <div v-if="isClassifying" class="classification-result classifying">
           <span class="result-icon">🔍</span>
@@ -135,74 +135,95 @@ onBeforeUnmount(() => {
         </div>
       </div>
       <video ref="videoRef" style="display: none"></video>
-      <canvas ref="canvasRef" width="640" height="480" style="border: 1px solid black"></canvas>
+      <canvas ref="canvasRef" width="640" height="480"></canvas>
     </div>
   </div>
 </template>
 
 <style scoped>
-.container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 20px;
-  border-radius: 10px;
-}
-
+/* Camera section layout */
 .camera-section {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 15px; /* Spacing between elements */
 }
 
+/* Classification result container */
 .classify-section {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   margin-top: 15px;
+  gap: 10px; /* Spacing between result and button */
 }
 
-.recycle-bg {
-  background-color: lightgreen;
-}
-.trash-bg {
-  background-color: lightcoral;
-}
-
-canvas {
-  max-width: 100%;
-  height: auto;
-}
-
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-bottom: 15px;
-}
-
+/* Classification result styling */
 .classification-result {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 20px;
   font-size: 18px;
   font-weight: bold;
   text-align: center;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
 }
 
-.classifying {
+.classification-result.classifying {
   background-color: rgba(173, 216, 230, 0.2); /* Light blue background */
-  color: #0066cc; /* Blue text */
+  color: #003a74; /* Blue text */
+}
+
+.recycle-bg .classification-result {
+  background-color: #d9f8e6; /* Light green for "Recycle" */
+  color: #044120; /* Dark green text */
+}
+
+.trash-bg .classification-result {
+  background-color: #f8d9d9; /* Light red for "Trash" */
+  color: #5d0c0c; /* Darker red text */
 }
 
 .result-icon {
   margin-right: 10px;
   font-size: 24px;
+  transform: translateY(2px); /* Slight vertical alignment fix */
+}
+
+/* Video and canvas styling */
+canvas {
+  width: auto;
+  height: calc(100vh - 220px); /* Dynamically adjust height (subtracting space for other elements) */
+  border-radius: 20px;
+  border: 4px solid #044120; /* Subtle border for clean design */
+}
+
+.button {
+  font-size: 24px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  .button {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+
+  .classification-result {
+    font-size: 16px;
+    padding: 12px;
+  }
 }
 </style>

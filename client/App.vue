@@ -27,33 +27,33 @@ onBeforeMount(async () => {
       <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     </head>
     <nav>
-      <div class="title">
+      <div class="title title-option">
         <i class="fa fa-recycle"></i>
         <RouterLink :to="{ name: 'Home' }">
-          <h1>ReCycle</h1>
+          <h1 :class="{ underline: currentRouteName == 'Home' }">ReCycle</h1>
         </RouterLink>
       </div>
       <ul>
         <li>
-          <RouterLink :to="{ name: 'Map' }" :class="{ underline: currentRouteName == 'Map' }"> Map</RouterLink>
+          <RouterLink :to="{ name: 'Map' }" :class="['menu-option', { underline: currentRouteName == 'Map' }]"> Map</RouterLink>
         </li>
         <li v-if="isLoggedIn">
-          <RouterLink :to="{ name: 'Plants' }" :class="{ underline: currentRouteName == 'Plants' }"> Plants</RouterLink>
+          <RouterLink :to="{ name: 'Plants' }" :class="['menu-option', { underline: currentRouteName == 'Plants' }]"> Plants</RouterLink>
         </li>
         <li v-if="isLoggedIn">
-          <RouterLink :to="{ name: 'Garden' }" :class="{ underline: currentRouteName == 'Garden' }"> Garden</RouterLink>
+          <RouterLink :to="{ name: 'Garden' }" :class="['menu-option', { underline: currentRouteName == 'Garden' }]"> Garden</RouterLink>
         </li>
         <li v-if="isLoggedIn">
-          <RouterLink :to="{ name: 'Profile' }" :class="{ underline: currentRouteName == 'Profile' }"> Profile</RouterLink>
+          <RouterLink :to="{ name: 'Profile' }" :class="['menu-option', { underline: currentRouteName == 'Profile' }]"> Profile</RouterLink>
         </li>
         <li v-else>
-          <RouterLink :to="{ name: 'Login' }" :class="{ underline: currentRouteName == 'Login' }"> Login </RouterLink>
+          <RouterLink :to="{ name: 'Login' }" :class="['menu-option', { underline: currentRouteName == 'Login' }]"> Login </RouterLink>
         </li>
         <li v-if="isLoggedIn">
-          <RouterLink :to="{ name: 'Friends' }" :class="{ underline: currentRouteName == 'Friends' }"> Friends </RouterLink>
+          <RouterLink :to="{ name: 'Friends' }" :class="['menu-option', { underline: currentRouteName == 'Friends' }]"> Friends </RouterLink>
         </li>
         <li v-if="isLoggedIn">
-          <RouterLink :to="{ name: 'Social' }" :class="{ underline: currentRouteName == 'Social' }"> Social </RouterLink>
+          <RouterLink :to="{ name: 'Social' }" :class="['menu-option', { underline: currentRouteName == 'Social' }]"> Social </RouterLink>
         </li>
       </ul>
     </nav>
@@ -78,12 +78,14 @@ i {
 }
 nav {
   padding: 1em 2em;
-  background-color: lightgray;
+  background-color: #d5f7d5;
   display: flex;
   align-items: center;
+  border-bottom: 4px solid #044120;
 }
 
 h1 {
+  color: #044120;
   font-size: 2em;
   margin: 0;
 }
@@ -100,7 +102,7 @@ img {
 
 a {
   font-size: large;
-  color: black;
+  color: #044120;
   text-decoration: none;
 }
 
@@ -115,5 +117,42 @@ ul {
 
 .underline {
   text-decoration: underline;
+}
+
+.menu-option {
+  display: inline-block;
+  cursor: pointer;
+  transition:
+    transform 0.3s,
+    filter 0.3s;
+}
+.menu-option:hover {
+  text-decoration: underline;
+  transform: scale(1.05); /* Slight scaling on hover */
+  filter: drop-shadow(0px 0px 5px #cccccc); /* Add a shadow on hover */
+  transition:
+    filter 0.3s,
+    transform 0.3s;
+}
+.menu-option:active {
+  transform: scale(0.95); /* Slight scaling on click */
+}
+
+.title-option {
+  cursor: pointer;
+  transition:
+    transform 0.3s,
+    filter 0.3s;
+}
+.title-option:hover {
+  text-decoration: none;
+  transform: scale(1.05); /* Slight scaling on hover */
+  filter: drop-shadow(0px 0px 5px #cccccc); /* Add a shadow on hover */
+  transition:
+    filter 0.3s,
+    transform 0.3s;
+}
+.title-option:active {
+  transform: scale(0.95); /* Slight scaling on click */
 }
 </style>

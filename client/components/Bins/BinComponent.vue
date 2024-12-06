@@ -1,10 +1,17 @@
 <script setup lang="ts">
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 import { fetchy } from "../../utils/fetchy";
+
+const userStore = useUserStore();
+const { isLoggedIn } = storeToRefs(userStore);
 
 const GOOGLE_MAP_API_KEY = "AIzaSyDqYZHShrNYA5aDPkiOfq2I5iEOcUBUKnw";
 
 const loaded = ref(false);
+const showContributeForm = ref(false);
+const useCurrentLocation = ref(false);
 
 const userLatitude = ref(36.7783); // Default latitude
 const userLongitude = ref(-119.4179); // Default longitude
@@ -18,6 +25,7 @@ const mapUrl = ref("");
 const formLat = ref("");
 const formLng = ref("");
 const formItem = ref("");
+const formError = ref("");
 
 function updateMapUrl() {
   if (mapMode.value === "view") {
@@ -58,23 +66,34 @@ async function addBin(lat: number, lng: number, item: string) {
       },
     });
     console.log("Bin added successfully");
+    showContributeForm.value = false; // Hide form after successful submission
+    formLat.value = "";
+    formLng.value = "";
+    formItem.value = "";
+    useCurrentLocation.value = false;
   } catch (_) {
     console.log("Error adding bin.");
   }
 }
 
-async function handleSubmit() {
-  if (formLat.value && formLng.value && formItem.value) {
-    const lat = parseFloat(formLat.value);
-    const lng = parseFloat(formLng.value);
-    const item = formItem.value;
-    await addBin(lat, lng, item);
-    formLat.value = "";
-    formLng.value = "";
-    formItem.value = "";
+async function submitBin(type: "trash" | "recycle") {
+  let lat: number, lng: number;
+
+  formError.value = "";
+
+  if (useCurrentLocation.value) {
+    lat = userLatitude.value;
+    lng = userLongitude.value;
   } else {
-    console.log("Please fill all fields.");
+    if (!formLat.value || isNaN(parseFloat(formLat.value)) || !formLng.value || isNaN(parseFloat(formLng.value))) {
+      formError.value = "Please provide valid latitude and longitude values.";
+      return;
+    }
+    lat = parseFloat(formLat.value);
+    lng = parseFloat(formLng.value);
   }
+
+  await addBin(lat, lng, type);
 }
 
 async function getNearestBin() {
@@ -94,6 +113,21 @@ async function handleBinTypeChange(type: "trash" | "recycle") {
   await updateMapUrl();
 }
 
+function toggleContributeForm() {
+  showContributeForm.value = !showContributeForm.value;
+}
+
+function toggleCurrentLocation(event: Event) {
+  event.preventDefault(); // Prevent accidental form submission
+  useCurrentLocation.value = !useCurrentLocation.value;
+
+  // Reset form fields when toggling
+  if (useCurrentLocation.value) {
+    formLat.value = "";
+    formLng.value = "";
+  }
+}
+
 onBeforeMount(async () => {
   try {
     await getUserLocation();
@@ -107,63 +141,191 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div v-if="loaded && mapUrl">
-    <div>
-      <button @click="handleBinTypeChange('trash')">Get Nearest Trash Bin</button>
-      <button @click="handleBinTypeChange('recycle')">Get Nearest Recycle Bin</button>
-    </div>
-    <iframe :src="mapUrl" :key="mapUrl" width="600" height="450" style="border: 0" loading="lazy"></iframe>
+  <div class="container" v-if="loaded">
+    <button @click="toggleContributeForm" class="button" v-if="isLoggedIn">
+      {{ showContributeForm ? "Cancel" : "Contribute a bin location!" }}
+    </button>
 
-    <h2>Add a New Bin</h2>
-    <form @submit.prevent="handleSubmit">
-      <div>
-        <label for="lat">Latitude:</label>
-        <input id="lat" v-model="formLat" type="text" />
+    <form v-if="showContributeForm && isLoggedIn" class="contribute-form">
+      <h2>Add a New Bin</h2>
+
+      <div class="current-location-toggle">
+        <button @click="toggleCurrentLocation($event)" :class="{ active: useCurrentLocation }" class="button">
+          {{ useCurrentLocation ? "Use Coordinates" : "Use Current Location" }}
+        </button>
       </div>
-      <div>
-        <label for="lng">Longitude:</label>
-        <input id="lng" v-model="formLng" type="text" />
+
+      <div v-if="!useCurrentLocation" class="coordinate-inputs">
+        <div>
+          <label for="lat">Latitude:</label>
+          <input id="lat" v-model="formLat" type="text" />
+        </div>
+        <div>
+          <label for="lng">Longitude:</label>
+          <input id="lng" v-model="formLng" type="text" />
+        </div>
       </div>
-      <div>
-        <label for="item">Item:</label>
-        <input id="item" v-model="formItem" type="text" />
+
+      <div v-else class="current-location-display">
+        <p>Latitude: {{ userLatitude.toFixed(4) }}</p>
+        <p>Longitude: {{ userLongitude.toFixed(4) }}</p>
       </div>
-      <button type="submit">Add Bin</button>
+
+      <div class="bin-type-buttons">
+        <button class="button" @click.prevent="submitBin('trash')">Add Trash Bin</button>
+        <button class="button" @click.prevent="submitBin('recycle')">Add Recycle Bin</button>
+      </div>
+
+      <p v-if="formError" class="form-error-message">{{ formError }}</p>
     </form>
+
+    <div v-if="mapUrl" class="map-section">
+      <div class="bin-type-buttons">
+        <button class="button" @click="handleBinTypeChange('trash')">Get Nearest Trash Bin</button>
+        <button class="button" @click="handleBinTypeChange('recycle')">Get Nearest Recycle Bin</button>
+      </div>
+      <iframe :src="mapUrl" :key="mapUrl" width="600" height="450" class="map-iframe" loading="lazy"></iframe>
+    </div>
+    <div v-else class="error-message">
+      <p>Geolocation is not currently enabled or supported by this browser.</p>
+    </div>
   </div>
-  <div v-else-if="loaded">
-    <p>Geolocation is not supported by this browser.</p>
-  </div>
-  <div v-else>
-    <p>Loading map...</p>
+  <div v-else class="loading-message">
+    <p>Loading...</p>
   </div>
 </template>
 
 <style scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  border-radius: 12px;
+}
+
 h2 {
-  margin-bottom: 10px;
+  color: #044120;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
-iframe {
-  margin-top: 20px;
+
+.contribute-btn {
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(45deg, #55c58a, #44b076, #3caf72);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease;
 }
-button {
-  margin: 10px;
+
+.contribute-btn:hover {
+  background: linear-gradient(45deg, #3caf72, #44b076, #55c58a);
+  transform: translateY(-3px);
+}
+
+.contribute-form {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+  padding: 0px 40px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.contribute-form input[type="text"] {
+  margin: 0 auto; /* Center-align the inputs */
+}
+
+.coordinate-inputs div,
+.contribute-form > div {
+  margin-bottom: 15px;
+}
+
+.contribute-form label {
+  display: block;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.contribute-form input[type="text"] {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  font-size: 16px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.current-location-display {
+  background-color: #f9fff9;
   padding: 10px;
+  border: 1px solid #44b076;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.location-toggle-btn {
+  padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
+  background: linear-gradient(45deg, #55c58a, #44b076, #3caf72);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease;
 }
-form {
-  margin-top: 20px;
+
+.location-toggle-btn.active {
+  background: #44b076;
 }
-form div {
+
+.location-toggle-btn:hover {
+  transform: scale(1.05);
+}
+
+.bin-type-buttons {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 10px;
+  gap: 20px;
 }
-label {
-  display: inline-block;
-  width: 100px;
+
+.map-section iframe {
+  margin-top: 10px;
+  border: none;
+  width: 100%;
+  height: 450px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
-input {
-  padding: 5px;
+
+.form-error-message {
+  color: red;
   font-size: 14px;
+  margin-top: 10px;
+}
+
+.error-message,
+.loading-message {
+  text-align: center;
+  font-size: 18px;
+  color: #555;
+  margin-top: 20px;
 }
 </style>
