@@ -77,7 +77,6 @@ onBeforeMount(async () => {
 
 <template>
   <div class="leaderboard">
-    <h2>Leaderboard</h2>
     <div class="toggle-container" v-if="isLoggedIn">
       <button :class="['button', { selected: selectedMode === 'all' }]" @click="toggleMode('all')">All Users</button>
       <button :class="['button', { selected: selectedMode === 'friends' }]" @click="toggleMode('friends')">Friends Only</button>

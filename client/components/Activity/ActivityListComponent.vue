@@ -30,7 +30,7 @@ async function getFriendActivity() {
     const friends = await fetchy("/api/friends", "GET", { alert: false });
     let friendsActivityResults: Array<Record<string, string>> = [];
     for (const act of activity.value) {
-      if (friends.includes(act.user)) {
+      if (friends.includes(act.user) || act.user === currentUsername.value) {
         friendsActivityResults.push(act);
       }
     }
@@ -43,7 +43,7 @@ async function getFriendActivity() {
 // Filter activity based on selected type
 const filteredActivity = computed(() => {
   if (selectedType.value === "personal") {
-    return activity.value.filter((act) => act.user === currentUsername.value);
+    return activity.value;
   } else if (selectedType.value === "friends") {
     return friendsActivity.value;
   }
@@ -80,8 +80,8 @@ const switchActivityType = (type: "personal" | "friends") => {
   <div class="activity-container">
     <!-- Activity Type Toggle -->
     <div class="activity-toggle">
-      <button :class="{ active: selectedType === 'personal' }" @click="switchActivityType('personal')">Personal</button>
-      <button :class="{ active: selectedType === 'friends' }" @click="switchActivityType('friends')">Friends</button>
+      <button :class="['button', { active: selectedType === 'personal' }]" @click="switchActivityType('personal')">All Users</button>
+      <button :class="['button', { active: selectedType === 'friends' }]" @click="switchActivityType('friends')">Friends Only</button>
     </div>
 
     <!-- Activity List -->
@@ -111,38 +111,34 @@ const switchActivityType = (type: "personal" | "friends") => {
 .activity-container {
   max-width: 600px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 20px;
   background: #fff;
   border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
 .activity-toggle {
   display: flex;
   justify-content: center;
   margin-bottom: 1rem;
-  gap: 1rem;
+  gap: 15px;
 }
 
-.activity-toggle button {
-  padding: 0.7rem 1.5rem;
-  border: 1px solid #ddd;
-  background: #f8f8f8;
-  border-radius: 25px;
-  color: #333;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.button {
+  background-color: white;
+  color: #044120;
+  border: 3px solid #044120;
+  padding: 6px 30px;
 }
 
-.activity-toggle button.active {
-  background-color: #17a217;
+.button:hover {
+  background-color: #deffed;
+}
+
+.button.active {
+  background-color: #044120;
   color: white;
-  border: none;
-}
-
-.activity-toggle button:hover {
-  background: #90f4a9;
+  border: 3px solid #044120;
 }
 
 .activity-list {
@@ -176,7 +172,7 @@ const switchActivityType = (type: "personal" | "friends") => {
 .avatar {
   width: 40px;
   height: 40px;
-  background: #41c51c;
+  background: #07944e;
   color: white;
   border-radius: 50%;
   display: flex;
