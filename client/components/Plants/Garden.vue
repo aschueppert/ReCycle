@@ -124,7 +124,7 @@ img {
   mix-blend-mode: multiply; /* Makes white areas transparent */
   background-color: transparent;
 
-  filter: saturate(1.8);
+  filter: saturate(2.5);
 }
 .link {
   text-decoration: none; /* Removes underline */

@@ -85,7 +85,7 @@ img {
   mix-blend-mode: multiply; /* Makes white areas transparent */
   background-color: transparent;
 
-  filter: brightness(1) saturate(1.8);
+  filter: saturate(1.8);
 }
 
 img:hover {
