@@ -4,7 +4,7 @@ import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 // Accessing the isLoggedIn state from the store
-const { isLoggedIn } = storeToRefs(useUserStore());
+const { isLoggedIn, currentUsername } = storeToRefs(useUserStore());
 
 // Reactive states
 const loaded = ref(false);
@@ -66,51 +66,53 @@ onBeforeMount(async () => {
   await getPoints();
   await getCosmetics();
   await getFriends();
-  await getStreak();
   loaded.value = true;
 });
 </script>
-<template>
-  <head>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-  </head>
-  <article v-if="loaded">
-    <div class="icons">
-      <button>
-        <p>{{ seeds.value }} Seeds</p>
-      </button>
-      <button>
-        <p>{{ points.value }} Points</p>
-      </button>
 
-      <button>
-        <p><i class="fas fa-users"></i> {{ friends.length }} Friends</p>
-      </button>
+<template>
+  <article v-if="loaded">
+    <h1>{{ currentUsername }}'s Profile</h1>
+    <div class="icons">
+      <div class="menu-option">{{ points.value }} Experience</div>
+      <div class="menu-option">{{ seeds.value }} Seeds</div>
+      <div class="menu-option">{{ friends.length }} Friends</div>
     </div>
-    <h1>Garden</h1>
-    <button>
-      <router-link :to="{ name: 'Garden' }" class="icons">
-        <div v-for="item in cosmetics" :key="item">
-          <img class="transparent-image" v-if="item != null" :src="item.description" />
-        </div>
-        <router-link :to="{ name: 'Plants' }" class="plus">+</router-link>
-      </router-link>
-    </button>
-    <h1>Friends</h1>
-    <button class="icons">
-      <div v-for="friend in friends" :key="friend" class="circle">{{ friend[0] }}</div>
-      <router-link :to="{ name: 'AddFriend' }" class="plus">+</router-link>
-    </button>
+    <h2>{{ currentUsername }}'s Garden</h2>
+    <router-link :to="{ name: 'Garden' }" class="garden-container">
+      <div v-for="item in cosmetics" :key="item">
+        <img class="transparent-image" v-if="item != null" :src="item.description" />
+      </div>
+    </router-link>
   </article>
 </template>
 
 <style scoped>
-.icons {
+.garden-container {
+  background-color: #d5f7d5;
   display: flex;
-  gap: 0.5em;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 1em;
+  justify-content: center;
+  padding: 1em;
+  margin-left: 1em;
+  margin-right: 1em;
+  border-radius: 20px;
+  border: 4px solid #044120;
 }
 
+h1 {
+  text-align: center;
+  color: #044120;
+  margin-bottom: 0;
+  margin-top: 0.5em;
+}
+h2 {
+  text-align: center;
+  color: #044120;
+  margin-bottom: 0;
+  margin-top: 0.5em;
+}
 .circle {
   width: 3em;
   height: 3em;
@@ -146,5 +148,32 @@ img {
   background-color: transparent;
 
   filter: brightness(1.2) saturate(1.8);
+}
+
+.icons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5em;
+}
+
+.menu-option {
+  display: inline-block;
+  cursor: pointer;
+  color: #044120;
+  font-size: 1em;
+  transition:
+    transform 0.3s,
+    filter 0.3s;
+}
+.menu-option:hover {
+  text-decoration: underline;
+  transform: scale(1.05); /* Slight scaling on hover */
+  filter: drop-shadow(0px 0px 5px #cccccc); /* Add a shadow on hover */
+  transition:
+    filter 0.3s,
+    transform 0.3s;
+}
+.menu-option:active {
+  transform: scale(0.95); /* Slight scaling on click */
 }
 </style>

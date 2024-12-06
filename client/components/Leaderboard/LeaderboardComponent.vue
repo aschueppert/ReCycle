@@ -88,7 +88,7 @@ onBeforeMount(async () => {
           <span class="rank medal-emoji" v-if="index < 3">{{ getMedalEmoji(index) }}</span>
           <span class="rank" v-else>#{{ index + 1 }}</span>
           <span class="username">{{ user.item }}</span>
-          <span class="points">{{ user.value }} pts</span>
+          <span class="points">{{ user.value }} Exp</span>
         </li>
       </ul>
       <p v-else-if="loaded">No data found</p>

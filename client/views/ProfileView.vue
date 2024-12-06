@@ -8,14 +8,7 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 <template>
   <main>
-    <h1>{{ currentUsername }}'s Profile</h1>
     <Profile />
     <SettingView />
   </main>
 </template>
-
-<style scoped>
-h1 {
-  text-align: center;
-}
-</style>

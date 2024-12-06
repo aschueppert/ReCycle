@@ -84,7 +84,8 @@ async function onMouseUp() {
 <template>
   <article v-if="loaded">
     <h1>{{ currentUsername }}'s Garden</h1>
-    <p>Click and drag plants to rearrange garden!</p>
+    <p>Click and drag plants to rearrange your garden!</p>
+    <button class="button"><router-link class="link" :to="{ name: 'Plants' }">Buy More Plants</router-link></button>
     <div class="icons" @mousemove="onMouseMove" @mouseup="onMouseUp" @mouseleave="onMouseUp">
       <div
         v-for="(item, index) in cosmetics"
@@ -99,7 +100,6 @@ async function onMouseUp() {
         <img :src="item.item" alt="Flower" class="transparent-image" draggable="false" />
       </div>
     </div>
-    <button class="button"><router-link class="link" :to="{ name: 'Plants' }">Buy More Plants</router-link></button>
   </article>
 </template>
 
@@ -134,6 +134,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 img {
