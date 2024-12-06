@@ -2,6 +2,9 @@ import { storeToRefs } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 
 import { useUserStore } from "@/stores/user";
+import ActivityListComponent from "../components/Activity/ActivityListComponent.vue";
+import AddFriendView from "../views/AddFriendView.vue";
+import FriendsView from "../views/FriendsView.vue";
 import GardenView from "../views/GardenView.vue";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/LoginView.vue";
@@ -10,9 +13,6 @@ import NotFoundView from "../views/NotFoundView.vue";
 import PlantsView from "../views/PlantsView.vue";
 import ProfileView from "../views/ProfileView.vue";
 import SettingView from "../views/SettingView.vue";
-import AddFriendView from "../views/AddFriendView.vue";
-import FriendsView from "../views/FriendsView.vue";
-import ActivityListComponent from "../components/Activity/ActivityListComponent.vue";
 import SocialView from "../views/SocialView.vue";
 
 const router = createRouter({

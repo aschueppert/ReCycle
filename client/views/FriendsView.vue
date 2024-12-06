@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import AddFriendComponent from "@/components/Friending/AddFriendComponent.vue";
 import FriendListComponent from "@/components/Friending/FriendListComponent.vue";
 import FriendRequestListComponent from "@/components/Friending/FriendRequestListComponent.vue";
-import router from "@/router";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
@@ -11,16 +11,11 @@ const currentRoute = useRoute();
 const currentRouteName = computed(() => currentRoute.name);
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
-
-async function viewAddFriend() {
-  void router.push({ name: "AddFriend" });
-}
 </script>
 
 <template>
   <div class="friends-view">
     <h1>Friends List</h1>
-    <button class="button" @click="viewAddFriend">Add Friend</button>
     <div class="friend-list-container">
       <FriendListComponent />
     </div>
@@ -30,6 +25,10 @@ async function viewAddFriend() {
     <div class="friend-list-container">
       <FriendRequestListComponent />
     </div>
+  </div>
+  <div class="friends-view">
+    <h1>Add Friends</h1>
+    <AddFriendComponent />
   </div>
 </template>
 
