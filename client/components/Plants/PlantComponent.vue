@@ -50,7 +50,7 @@ onBeforeMount(async () => {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   </head>
   <section v-if="loaded">
-    <img v-if="props.item != null" :src="item.description" alt="Flower" />
+    <img v-if="props.item != null" :src="item.description" class="transparent-image" alt="Flower" />
     <button class="button" @click="buyPlant(props.item.name)">Buy with {{ props.item.value }} {{ props.item.value == 1 ? "Seed" : "Seeds" }}</button>
   </section>
 </template>
@@ -79,6 +79,13 @@ img {
   height: 100px;
   margin-bottom: 10px;
   transition: transform 0.2s ease; /* Smooth scaling on hover */
+}
+
+.transparent-image {
+  mix-blend-mode: multiply; /* Makes white areas transparent */
+  background-color: transparent;
+
+  filter: brightness(1) saturate(1.8);
 }
 
 img:hover {
