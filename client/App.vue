@@ -53,7 +53,7 @@ onBeforeMount(async () => {
           <RouterLink :to="{ name: 'Profile' }" :class="['menu-option', { underline: currentRouteName == 'Profile' }]"> Profile</RouterLink>
         </li>
         <li v-else>
-          <RouterLink :to="{ name: 'Login' }" :class="['menu-option', { underline: currentRouteName == 'Login' }]"> Login </RouterLink>
+          <RouterLink :to="{ name: 'Login' }" :class="['menu-option', { underline: currentRouteName == 'Login' }]"> Login to Use All Features</RouterLink>
         </li>
       </ul>
     </nav>
