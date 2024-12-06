@@ -51,7 +51,7 @@ onBeforeMount(async () => {
   </head>
   <section v-if="loaded">
     <p>{{ props.item.value }} Seeds</p>
-    <img v-if="props.item != null" :src="'client/assets/images/' + props.item.description" />
+    <img v-if="props.item != null" :src="item.description" alt="Flower" />
     <button @click="buyPlant(props.item.name)">grow</button>
   </section>
 </template>

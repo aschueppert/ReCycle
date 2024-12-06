@@ -95,7 +95,7 @@ async function onMouseUp() {
         }"
         @mousedown="onMouseDown($event, index)"
       >
-        <img v-if="item != null" :src="'client/assets/images/' + item.item" draggable="false" />
+        <img :src="item.item" alt="Flower" class="transparent-image" draggable="false" />
       </div>
     </div>
     <button><router-link class="link" :to="{ name: 'Plants' }">Grow Plants</router-link></button>
@@ -119,6 +119,13 @@ article {
 img {
   width: 50px;
   height: 70px;
+}
+.transparent-image {
+  mix-blend-mode: multiply; /* Makes white areas transparent */
+  background-color: transparent;
+
+  filter: brightness(1.5); /* Increase brightness (default is 1) */
+  filter: brightness(1.1) saturate(1.7);
 }
 .link {
   text-decoration: none; /* Removes underline */
