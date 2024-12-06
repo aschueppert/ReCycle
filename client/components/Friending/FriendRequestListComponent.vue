@@ -70,6 +70,7 @@ onBeforeMount(async () => {
   max-width: 600px;
   margin: 0 auto;
 }
+
 .friendrequest-items {
   list-style: none;
   padding: 0;
@@ -77,9 +78,27 @@ onBeforeMount(async () => {
   width: 100%;
 }
 
+.friendrequest-items li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.request-name {
+  text-align: left;
+  flex: 1; /* Take up the remaining space */
+}
+
+.request-buttons {
+  display: flex;
+  gap: 10px; /* Small gap between buttons */
+}
+
 .no-requests {
   color: #044120;
 }
+
 .loading-text {
   color: #044120;
 }
