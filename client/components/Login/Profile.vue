@@ -82,9 +82,6 @@ onBeforeMount(async () => {
       <button>
         <p>{{ points.value }} Points</p>
       </button>
-      <button>
-        <p>{{ streak.value }} Day Streak</p>
-      </button>
 
       <button>
         <p><i class="fas fa-users"></i> {{ friends.length }} Friends</p>
@@ -94,7 +91,7 @@ onBeforeMount(async () => {
     <button>
       <router-link :to="{ name: 'Garden' }" class="icons">
         <div v-for="item in cosmetics" :key="item">
-          <img class="plants" v-if="item != null" :src="'client/assets/images/' + item.description" />
+          <img class="transparent-image" v-if="item != null" :src="item.description" />
         </div>
         <router-link :to="{ name: 'Plants' }" class="plus">+</router-link>
       </router-link>
@@ -139,5 +136,15 @@ article {
 }
 img {
   height: 3em;
+}
+img {
+  width: 50px;
+  height: 70px;
+}
+.transparent-image {
+  mix-blend-mode: multiply; /* Makes white areas transparent */
+  background-color: transparent;
+
+  filter: brightness(1.2) saturate(1.8);
 }
 </style>

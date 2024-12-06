@@ -107,7 +107,7 @@ async function onMouseUp() {
   position: relative;
   width: 650px;
   height: 650px;
-  background-color: #ccdc99;
+  background-color: #d5f7d5;
 }
 article {
   display: flex;
@@ -124,8 +124,7 @@ img {
   mix-blend-mode: multiply; /* Makes white areas transparent */
   background-color: transparent;
 
-  filter: brightness(1.5); /* Increase brightness (default is 1) */
-  filter: brightness(1.1) saturate(1.7);
+  filter: brightness(1.2) saturate(1.8);
 }
 .link {
   text-decoration: none; /* Removes underline */
