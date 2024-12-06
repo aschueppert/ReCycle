@@ -94,6 +94,11 @@ async function submitBin(type: "trash" | "recycle") {
   }
 
   await addBin(lat, lng, type);
+
+  destinationLatitude.value = lat;
+  destinationLongitude.value = lng;
+  mapMode.value = "directions";
+  await updateMapUrl();
 }
 
 async function getNearestBin() {
@@ -143,7 +148,7 @@ onBeforeMount(async () => {
 <template>
   <div class="container" v-if="loaded">
     <button @click="toggleContributeForm" class="button" v-if="isLoggedIn">
-      {{ showContributeForm ? "Cancel" : "Contribute a bin location!" }}
+      {{ showContributeForm ? "Cancel" : "Add a bin!" }}
     </button>
 
     <form v-if="showContributeForm && isLoggedIn" class="contribute-form">
@@ -181,8 +186,8 @@ onBeforeMount(async () => {
 
     <div v-if="mapUrl" class="map-section">
       <div class="bin-type-buttons">
-        <button class="button" @click="handleBinTypeChange('trash')">Get Nearest Trash Bin</button>
-        <button class="button" @click="handleBinTypeChange('recycle')">Get Nearest Recycle Bin</button>
+        <button class="button" @click="handleBinTypeChange('trash')">Nearest 🗑️ Trash Bin</button>
+        <button class="button" @click="handleBinTypeChange('recycle')">Nearest ♻️ Recycle Bin</button>
       </div>
       <iframe :src="mapUrl" :key="mapUrl" width="600" height="450" class="map-iframe" loading="lazy"></iframe>
     </div>
@@ -308,11 +313,10 @@ h2 {
 
 .map-section iframe {
   margin-top: 10px;
-  border: none;
   width: 100%;
-  height: 450px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  height: calc(100vh - 270px); /* Dynamically adjust height (subtracting space for other elements) */
+  border-radius: 20px;
+  border: 4px solid #044120; /* Subtle border for clean design */
 }
 
 .form-error-message {

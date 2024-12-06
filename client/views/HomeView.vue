@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import CameraFeed from "@/components/Camera/CameraFeed.vue";
-import LeaderboardComponent from "@/components/Leaderboard/LeaderboardComponent.vue";
 </script>
 
 <template>
