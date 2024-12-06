@@ -50,9 +50,8 @@ onBeforeMount(async () => {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   </head>
   <section v-if="loaded">
-    <p>{{ props.item.value }} Seeds</p>
     <img v-if="props.item != null" :src="item.description" alt="Flower" />
-    <button @click="buyPlant(props.item.name)">grow</button>
+    <button class="button" @click="buyPlant(props.item.name)">Buy with {{ props.item.value }} {{ props.item.value == 1 ? "Seed" : "Seeds" }}</button>
   </section>
 </template>
 
@@ -61,20 +60,28 @@ section {
   display: flex;
   align-items: center;
   flex-direction: column;
-  border: 2px solid #000; /* Adjust the border color as needed */
-  border-radius: 15px; /* Adjust the radius for rounded corners */
-  padding: 5px; /* Optional, for spacing inside the border */
-  width: 20%;
+  border: 2px solid #044120; /* Dark green border */
+  border-radius: 20px;
+  padding: 20px; /* Increased for better spacing */
+  width: 20%; /* Adjusted width for better balance */
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease; /* Smooth hover effect */
 }
-i {
-  font-size: 3em;
-  color: green;
+
+section:hover {
+  transform: scale(1.025); /* Slight scaling on hover */
+  background-color: #eafeea; /* Light green background */
 }
 img {
-  width: 50px;
-  height: 70px;
+  width: 80px; /* Larger image */
+  height: 100px;
+  margin-bottom: 10px;
+  transition: transform 0.2s ease; /* Smooth scaling on hover */
 }
-button {
-  margin-top: 1em;
+
+img:hover {
+  transform: scale(1.1); /* Slightly larger image on hover */
 }
 </style>

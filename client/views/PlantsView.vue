@@ -7,7 +7,6 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 <template>
   <main>
-    <h1>Garden Store</h1>
     <PlantListComponent />
   </main>
 </template>

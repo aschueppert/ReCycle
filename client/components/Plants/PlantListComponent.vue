@@ -4,7 +4,6 @@ import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
-import CreatePlantForm from "./CreatePlantForm.vue";
 // Accessing the isLoggedIn state from the store
 const { isLoggedIn } = storeToRefs(useUserStore());
 
@@ -64,16 +63,16 @@ onBeforeMount(async () => {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   </head>
   <article v-if="loaded">
-    <h2>Buy Plants</h2>
+    <h2>Buy Plants to Add to your Garden!</h2>
     <div class="seeds">
-      <img class="seed" :src="'client/components/Login/seed.png'" />
+      <img class="seed" src="@/components/Login/seed.png" />
       <p>{{ seeds.value }} Seeds</p>
     </div>
     <div class="plants">
       <PlantComponent v-for="item in all_cosmetics" :key="item" :item="item" @refresh="getCosmetics" />
     </div>
-    <button @click="classify">get seeds</button>
-    <CreatePlantForm @refresh="getAllCosmetics" />
+    <!-- <button @click="classify">get seeds</button>
+    <CreatePlantForm @refresh="getAllCosmetics" /> -->
   </article>
 </template>
 
@@ -83,14 +82,16 @@ article {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1em;
-  padding: 2em;
+  gap: 0.5em; /* Reduced gap between elements */
+  padding: 1em 2em; /* Reduced top padding */
+  margin-top: 0; /* Ensure no extra margin from parent containers */
 }
 
 /* Text styling */
 h2 {
   color: #044120;
   font-weight: bold;
+  margin-bottom: 0.2em; /* Reduce space below the heading */
 }
 
 p {
