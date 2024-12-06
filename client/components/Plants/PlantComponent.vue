@@ -16,7 +16,7 @@ const loaded = ref(false);
 // Trigger an action to buy a plant
 async function buyPlant(item: string) {
   try {
-    await fetchy(`/api/purchase`, "POST", { body: { item } });
+    await fetchy(`/api/purchase`, "POST", { body: { item }, alert: false });
     void router.push({ name: "Garden" });
     emit("refresh");
   } catch (_) {

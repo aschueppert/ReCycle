@@ -15,7 +15,7 @@ const containerHeight = 600;
 
 async function getPlantLocations() {
   try {
-    const cosmeticsResults = await fetchy("/api/plantlocations", "GET", {});
+    const cosmeticsResults = await fetchy("/api/plantlocations", "GET", { alert: false });
     cosmetics.value = cosmeticsResults;
   } catch (e) {
     console.log(e);
@@ -24,7 +24,7 @@ async function getPlantLocations() {
 async function setPlantLocation(item: string, lat: number, long: number, id: string) {
   try {
     console.log(id);
-    await fetchy("/api/plantlocations", "PATCH", { body: { location: id, lat: lat, long: long } });
+    await fetchy("/api/plantlocations", "PATCH", { body: { location: id, lat: lat, long: long }, alert: false });
   } catch (e) {
     console.log(e);
   }
@@ -99,36 +99,60 @@ async function onMouseUp() {
         <img :src="item.item" alt="Flower" class="transparent-image" draggable="false" />
       </div>
     </div>
-    <button><router-link class="link" :to="{ name: 'Plants' }">Grow Plants</router-link></button>
+    <button class="button"><router-link class="link" :to="{ name: 'Plants' }">Buy More Plants</router-link></button>
   </article>
 </template>
 
 <style scoped>
+article {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  width: 700px;
+  margin: auto; /* Centers the article on the page */
+}
+
+h1 {
+  font-size: 2rem;
+  color: #044120; /* Garden green */
+  margin: 0;
+}
+p {
+  font-size: 1rem;
+  color: #044120;
+  text-align: center;
+}
+
 .icons {
   position: relative;
   width: 650px;
   height: 650px;
-  background-color: #d5f7d5;
-}
-article {
+  background-color: #d5f7d5; /* Light green */
+  border: 4px solid #044120; /* Matches garden theme */
+  border-radius: 10px;
   display: flex;
-  gap: 10px;
-  flex-direction: column; /* Stacks items vertically */
-  justify-content: center; /* Centers items vertically */
-  align-items: center; /* Centers items horizontally */
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
 }
 img {
   width: 50px;
   height: 70px;
+  cursor: grab;
+  transition: transform 0.3s ease;
+}
+img:hover {
+  transform: scale(1.1);
+}
+img:active {
+  cursor: grabbing;
+  transform: scale(0.9);
 }
 .transparent-image {
   mix-blend-mode: multiply; /* Makes white areas transparent */
   background-color: transparent;
 
-  filter: saturate(2.5);
-}
-.link {
-  text-decoration: none; /* Removes underline */
-  color: inherit; /* Inherits color from parent or sets custom color */
+  filter: saturate(3);
 }
 </style>

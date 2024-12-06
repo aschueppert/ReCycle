@@ -15,7 +15,7 @@ const all_cosmetics = ref();
 // Fetch the scores data
 async function getSeeds() {
   try {
-    const seedResults = await fetchy(`/api/seeds`, "GET", {});
+    const seedResults = await fetchy(`/api/seeds`, "GET", { alert: false });
     seeds.value = seedResults; // Assign the response to scores
   } catch (_) {
     seeds.value = 0; // Handle errors by resetting scores
@@ -24,7 +24,7 @@ async function getSeeds() {
 
 async function getCosmetics() {
   try {
-    const cosmeticsResults = await fetchy(`/api/cosmetics`, "GET", {});
+    const cosmeticsResults = await fetchy(`/api/cosmetics`, "GET", { alert: false });
     console.log(cosmeticsResults);
     cosmetics.value = cosmeticsResults;
   } catch (e) {
@@ -34,7 +34,7 @@ async function getCosmetics() {
 
 async function getAllCosmetics() {
   try {
-    const all_cosmeticsResults = await fetchy(`/api/allcosmetics`, "GET", {});
+    const all_cosmeticsResults = await fetchy(`/api/allcosmetics`, "GET", { alert: false });
     all_cosmetics.value = all_cosmeticsResults; // Assign the response to scores
   } catch (e) {
     console.log(e);

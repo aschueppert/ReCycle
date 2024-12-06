@@ -17,6 +17,10 @@ const userLatitude = ref(36.7783); // Default latitude
 const userLongitude = ref(-119.4179); // Default longitude
 const destinationLatitude = ref(-33.8688); // Default latitude
 const destinationLongitude = ref(151.2093); // Default longitude
+const positionOptions = {
+  enableHighAccuracy: false,
+  maximumAge: 300000, // 5 minutes cache
+};
 
 const binType = ref<"trash" | "recycle">("trash");
 const mapMode = ref<"view" | "directions">("view");
@@ -48,6 +52,7 @@ async function getUserLocation() {
           console.log("Geolocation error:", err.message);
           reject(err);
         },
+        positionOptions,
       );
     } else {
       console.log("Geolocation is not supported by this browser.");
@@ -135,7 +140,9 @@ function toggleCurrentLocation(event: Event) {
 
 onBeforeMount(async () => {
   try {
+    console.log("Fetching user location...");
     await getUserLocation();
+    console.log("User location fetched successfully.");
     updateMapUrl();
     loaded.value = true;
   } catch (error) {
@@ -189,14 +196,14 @@ onBeforeMount(async () => {
         <button class="button" @click="handleBinTypeChange('trash')">Nearest 🗑️ Trash Bin</button>
         <button class="button" @click="handleBinTypeChange('recycle')">Nearest ♻️ Recycle Bin</button>
       </div>
-      <iframe :src="mapUrl" :key="mapUrl" width="600" height="450" class="map-iframe" loading="lazy"></iframe>
+      <iframe :src="mapUrl" :key="mapUrl" width="600" height="450" class="map-iframe" loading="lazy" allowfullscreen></iframe>
     </div>
     <div v-else class="error-message">
       <p>Geolocation is not currently enabled or supported by this browser.</p>
     </div>
   </div>
   <div v-else class="loading-message">
-    <p>Loading...</p>
+    <p>Fetching your location...</p>
   </div>
 </template>
 
