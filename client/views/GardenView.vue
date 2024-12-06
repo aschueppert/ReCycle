@@ -7,13 +7,6 @@ const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 <template>
   <main>
-    <h1>{{ currentUsername }}'s Garden</h1>
     <Garden />
   </main>
 </template>
-
-<style scoped>
-h1 {
-  text-align: center;
-}
-</style>

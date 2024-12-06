@@ -74,6 +74,9 @@ onBeforeMount(async () => {
     <!-- <button @click="classify">get seeds</button>
     <CreatePlantForm @refresh="getAllCosmetics" /> -->
   </article>
+  <article v-else>
+    <p>Loading...</p>
+  </article>
 </template>
 
 <style scoped>

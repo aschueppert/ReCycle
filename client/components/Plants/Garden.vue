@@ -5,7 +5,7 @@ import { storeToRefs } from "pinia";
 import { onBeforeMount, ref } from "vue";
 
 // Accessing the isLoggedIn state from the store
-const { isLoggedIn } = storeToRefs(useUserStore());
+const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
 // Reactive states
 const loaded = ref(false);
@@ -83,7 +83,8 @@ async function onMouseUp() {
 
 <template>
   <article v-if="loaded">
-    <p>Click and move plants to rearrange garden</p>
+    <h1>{{ currentUsername }}'s Garden</h1>
+    <p>Click and drag plants to rearrange garden!</p>
     <div class="icons" @mousemove="onMouseMove" @mouseup="onMouseUp" @mouseleave="onMouseUp">
       <div
         v-for="(item, index) in cosmetics"
