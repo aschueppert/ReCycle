@@ -24,7 +24,7 @@ export async function fetchy(
   },
 ) {
   options = options ?? {};
-  options.alert = options.alert ?? true;
+  options.alert = options.alert ?? false;
 
   const queryString = new URLSearchParams(options.query).toString();
   const fullUrl = `${url}?${queryString}`;

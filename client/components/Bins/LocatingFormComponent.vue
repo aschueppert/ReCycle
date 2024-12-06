@@ -27,7 +27,7 @@ async function getCurrentLocation() {
 
 async function getNearestBins(lat: number, lng: number, binType: string) {
   try {
-    const results = await fetchy(`/api/bin/${lat}/${lng}/${binType}`, "GET", {});
+    const results = await fetchy(`/api/bin/${lat}/${lng}/${binType}`, "GET", { alert: false });
     console.log(results);
     return results;
   } catch (_) {
@@ -44,6 +44,7 @@ async function addBin(lat: number, lng: number, binType: string) {
         lng: lng,
         type: binType,
       },
+      alert: false,
     });
   } catch (_) {
     return;

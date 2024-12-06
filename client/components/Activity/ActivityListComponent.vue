@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { fetchy } from "@/utils/fetchy";
-import { onBeforeMount, ref, computed } from "vue";
 import { useUserStore } from "@/stores/user";
+import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
+import { computed, onBeforeMount, ref } from "vue";
 
 const { currentUsername, isLoggedIn } = storeToRefs(useUserStore());
 
@@ -14,7 +14,7 @@ const selectedType = ref<"personal" | "friends">("personal");
 // Fetch activity data
 async function getActivity() {
   try {
-    const activityResults = await fetchy(`/api/classify`, "GET");
+    const activityResults = await fetchy(`/api/classify`, "GET", { alert: false });
     activity.value = activityResults;
   } catch (error) {
     console.error("Error fetching activity:", error);
@@ -27,7 +27,7 @@ async function getFriendActivity() {
     return;
   }
   try {
-    const friends = await fetchy("/api/friends", "GET", {});
+    const friends = await fetchy("/api/friends", "GET", { alert: false });
     let friendsActivityResults: Array<Record<string, string>> = [];
     for (const act of activity.value) {
       if (friends.includes(act.user)) {

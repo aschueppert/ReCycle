@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useFriendsStore, useFriendRequestsStore } from "@/stores/friend";
+import { useFriendRequestsStore, useFriendsStore } from "@/stores/friend";
 import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
@@ -25,7 +25,7 @@ const filterUsers = async () => {
 
   try {
     // Fetch users from the API
-    const response = await fetchy(`/api/users`, "GET");
+    const response = await fetchy(`/api/users`, "GET", { alert: false });
     // Assuming `response` is an array of UserDoc
     const allUsers: { username: string; password: string; lastOnline: number }[] = response;
 
@@ -40,7 +40,7 @@ const filterUsers = async () => {
 // Send friend request
 const sendRequest = async (username: string) => {
   try {
-    await fetchy(`/api/friend/requests/${username}`, "POST");
+    await fetchy(`/api/friend/requests/${username}`, "POST", { alert: false });
     alert(`Friend request sent to ${username}`);
   } catch (error) {
     console.error("Error sending friend request:", error);

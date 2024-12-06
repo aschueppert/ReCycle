@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useFriendsStore, useFriendRequestsStore } from "@/stores/friend";
+import { useFriendRequestsStore, useFriendsStore } from "@/stores/friend";
 import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
@@ -40,7 +40,7 @@ const getRequestStatus = async () => {
 
 const sendRequest = async () => {
   try {
-    await fetchy(`/api/friend/requests/${props.username}`, "POST");
+    await fetchy(`/api/friend/requests/${props.username}`, "POST", { alert: false });
   } catch (_) {
     return;
   }
@@ -48,7 +48,7 @@ const sendRequest = async () => {
 
 const deleteRequest = async () => {
   try {
-    await fetchy(`/api/friend/requests/${props.username}`, "DELETE");
+    await fetchy(`/api/friend/requests/${props.username}`, "DELETE", { alert: false });
   } catch (_) {
     return;
   }
@@ -56,7 +56,7 @@ const deleteRequest = async () => {
 
 const deleteFriend = async () => {
   try {
-    await fetchy(`/api/friends/${props.username}`, "DELETE");
+    await fetchy(`/api/friends/${props.username}`, "DELETE", { alert: false });
   } catch (_) {
     return;
   }

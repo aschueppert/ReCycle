@@ -69,6 +69,7 @@ async function addBin(lat: number, lng: number, item: string) {
         lng,
         item,
       },
+      alert: false,
     });
     console.log("Bin added successfully");
     showContributeForm.value = false; // Hide form after successful submission
@@ -108,7 +109,7 @@ async function submitBin(type: "trash" | "recycle") {
 
 async function getNearestBin() {
   try {
-    const result = await fetchy(`/api/bin/${userLatitude.value}/${userLongitude.value}/${binType.value}`, "GET", {});
+    const result = await fetchy(`/api/bin/${userLatitude.value}/${userLongitude.value}/${binType.value}`, "GET", { alert: false });
     destinationLatitude.value = result.lat;
     destinationLongitude.value = result.lng;
   } catch (_) {
