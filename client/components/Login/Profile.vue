@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import router from "@/router";
 import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import { storeToRefs } from "pinia";
@@ -60,6 +61,22 @@ async function getFriends() {
   }
 }
 
+async function viewLeaderboard() {
+  void router.push({ name: "Social" });
+}
+
+async function viewPlants() {
+  void router.push({ name: "Plants" });
+}
+
+async function viewFriends() {
+  void router.push({ name: "Friends" });
+}
+
+async function viewGarden() {
+  void router.push({ name: "Garden" });
+}
+
 // Fetch scores when the component mounts
 onBeforeMount(async () => {
   await getSeeds();
@@ -71,19 +88,24 @@ onBeforeMount(async () => {
 </script>
 
 <template>
+  <h1>{{ currentUsername }}'s Profile</h1>
   <article v-if="loaded">
-    <h1>{{ currentUsername }}'s Profile</h1>
     <div class="icons">
-      <div class="menu-option">{{ points.value }} Experience</div>
-      <div class="menu-option">{{ seeds.value }} Seeds</div>
-      <div class="menu-option">{{ friends.length }} Friends</div>
+      <div class="menu-option" @click="viewLeaderboard">{{ points.value }} Experience</div>
+      <div class="menu-option" @click="viewPlants">{{ seeds.value }} Seeds</div>
+      <div class="menu-option" @click="viewFriends">{{ friends.length }} Friends</div>
     </div>
-    <h2>{{ currentUsername }}'s Garden</h2>
-    <router-link :to="{ name: 'Garden' }" class="garden-container">
-      <div v-for="item in cosmetics" :key="item">
-        <img class="transparent-image" v-if="item != null" :src="item.description" />
-      </div>
-    </router-link>
+    <div>
+      <h2 class="menu-option" @click="viewGarden">{{ currentUsername }}'s Garden</h2>
+      <router-link :to="{ name: 'Garden' }" class="garden-container menu-option">
+        <div v-for="item in cosmetics" :key="item">
+          <img class="transparent-image" v-if="item != null" :src="item.description" />
+        </div>
+      </router-link>
+    </div>
+  </article>
+  <article v-else>
+    <p>Loading...</p>
   </article>
 </template>
 
@@ -91,12 +113,15 @@ onBeforeMount(async () => {
 .garden-container {
   background-color: #d5f7d5;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: clip;
   gap: 1em;
   justify-content: center;
+  align-items: center; /* Center-align items vertically */
+  text-align: center; /* Ensure proper centering for text content, if any */
   padding: 1em;
-  margin-left: 1em;
-  margin-right: 1em;
+  margin-left: 2em;
+  margin-right: 2em;
   border-radius: 20px;
   border: 4px solid #044120;
 }
@@ -104,10 +129,16 @@ onBeforeMount(async () => {
 h1 {
   text-align: center;
   color: #044120;
-  margin-bottom: 0;
+  margin-bottom: 0.5em;
   margin-top: 0.5em;
 }
 h2 {
+  text-align: center;
+  color: #044120;
+  margin-bottom: 0.25em;
+  margin-top: 0.25em;
+}
+p {
   text-align: center;
   color: #044120;
   margin-bottom: 0;
@@ -127,7 +158,8 @@ article {
   display: flex;
   flex-direction: column;
   gap: 0.5em;
-  padding: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 .plus {
   font-size: 3em;
@@ -135,9 +167,6 @@ article {
   color: inherit;
   margin: 0;
   padding: 0;
-}
-img {
-  height: 3em;
 }
 img {
   width: 50px;
@@ -157,10 +186,8 @@ img {
 }
 
 .menu-option {
-  display: inline-block;
   cursor: pointer;
   color: #044120;
-  font-size: 1em;
   transition:
     transform 0.3s,
     filter 0.3s;
