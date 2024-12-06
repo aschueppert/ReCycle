@@ -79,8 +79,8 @@ onBeforeMount(async () => {
   <div class="leaderboard">
     <h2>Leaderboard</h2>
     <div class="toggle-container" v-if="isLoggedIn">
-      <button :class="['mode-button', { selected: selectedMode === 'all' }]" @click="toggleMode('all')">All Users</button>
-      <button :class="['mode-button', { selected: selectedMode === 'friends' }]" @click="toggleMode('friends')">Friends Only</button>
+      <button :class="['button', { selected: selectedMode === 'all' }]" @click="toggleMode('all')">All Users</button>
+      <button :class="['button', { selected: selectedMode === 'friends' }]" @click="toggleMode('friends')">Friends Only</button>
     </div>
     <div class="points-container">
       <ul v-if="loaded && (selectedMode === 'all' ? points : friendsPoints).length !== 0">
@@ -123,23 +123,21 @@ onBeforeMount(async () => {
   margin-bottom: 20px; /* Space between toggle container and list */
 }
 
-.mode-button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 600;
-  border: 2px solid #000;
-  border-radius: 25px;
+.button {
   background-color: white;
-  color: #000;
-  cursor: pointer;
-  transition:
-    background-color 0.3s,
-    color 0.3s;
+  color: #044120;
+  border: 3px solid #044120;
+  padding: 6px 30px;
 }
 
-.mode-button.selected {
-  background-color: black;
+.button:hover {
+  background-color: #deffed;
+}
+
+.button.selected {
+  background-color: #044120;
   color: white;
+  border: 3px solid #044120;
 }
 
 .points-container {
