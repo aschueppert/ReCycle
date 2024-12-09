@@ -69,7 +69,7 @@ async function addBin(lat: number, lng: number, item: string) {
         lng,
         item,
       },
-      alert: false,
+      alert: true,
     });
     console.log("Bin added successfully");
     showContributeForm.value = false; // Hide form after successful submission
