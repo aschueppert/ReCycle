@@ -22,6 +22,7 @@ async function getFriendRequests() {
 async function acceptRequest(user: string) {
   try {
     await fetchy(`/api/friend/accept/${user}`, "PUT");
+    friendRequests.value = friendRequests.value.filter((request) => request.from !== user);
   } catch (_) {
     return;
   }
@@ -30,6 +31,7 @@ async function acceptRequest(user: string) {
 async function rejectRequest(user: string) {
   try {
     await fetchy(`/api/friend/reject/${user}`, "PUT");
+    friendRequests.value = friendRequests.value.filter((request) => request.from !== user);
   } catch (_) {
     return;
   }
@@ -55,7 +57,7 @@ onBeforeMount(async () => {
       </ul>
     </div>
     <div v-else-if="loaded" class="no-requests">
-      <p>No requests yet!</p>
+      <p>No requests at the moment!</p>
     </div>
     <div v-else class="loading-text">Loading...</div>
   </div>
