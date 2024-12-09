@@ -103,8 +103,10 @@ export default class FriendingConcept {
         { user1: u2, user2: u1 },
       ],
     });
-    if (friendship !== null || u1.toString() === u2.toString()) {
+    if (friendship !== null) {
       throw new AlreadyFriendsError(u1, u2);
+    } else if (u1.toString() === u2.toString()) {
+      throw new FriendingSelfError();
     }
   }
 
@@ -146,6 +148,12 @@ export class FriendNotFoundError extends NotFoundError {
     public readonly user2: ObjectId,
   ) {
     super("Friendship between {0} and {1} does not exist!", user1, user2);
+  }
+}
+
+export class FriendingSelfError extends NotFoundError {
+  constructor() {
+    super("That's you!");
   }
 }
 
