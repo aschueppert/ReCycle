@@ -40,7 +40,7 @@ const getRequestStatus = async () => {
 
 const sendRequest = async () => {
   try {
-    await fetchy(`/api/friend/requests/${props.username}`, "POST", { alert: false });
+    await fetchy(`/api/friend/requests/${props.username}`, "POST", { alert: true });
   } catch (_) {
     return;
   }
@@ -48,7 +48,7 @@ const sendRequest = async () => {
 
 const deleteRequest = async () => {
   try {
-    await fetchy(`/api/friend/requests/${props.username}`, "DELETE", { alert: false });
+    await fetchy(`/api/friend/requests/${props.username}`, "DELETE", { alert: true });
   } catch (_) {
     return;
   }
@@ -56,7 +56,7 @@ const deleteRequest = async () => {
 
 const deleteFriend = async () => {
   try {
-    await fetchy(`/api/friends/${props.username}`, "DELETE", { alert: false });
+    await fetchy(`/api/friends/${props.username}`, "DELETE", { alert: true });
   } catch (_) {
     return;
   }
@@ -73,6 +73,12 @@ const toggleFriend = async () => {
     friendRequesting.value = true;
     await sendRequest();
   }
+  await friendsStore.getFriends();
+  await friendRequestsStore.getFriendRequests();
+};
+
+const removeFriend = async () => {
+  await deleteFriend();
   await friendsStore.getFriends();
   await friendRequestsStore.getFriendRequests();
 };
@@ -102,27 +108,37 @@ watch(
 
 <template>
   <div v-if="loaded && isLoggedIn && currentUsername !== props.username">
-    <button class="friend-button" @click="toggleFriend">
-      {{ friending ? "Unfriend" : friendRequesting ? "Request" : "Cancel" }}
-    </button>
+    <button class="friend-button" @click="removeFriend">Unfriend</button>
   </div>
 </template>
 
 <style>
 .friend-button {
   display: inline-block;
-  padding: 6px 12px;
-  font-size: 12px;
-  background-color: #050303;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #121212;
   color: #ffffff;
-  border: 1px solid #ddd;
+  border: none;
   cursor: pointer;
-  border-radius: 4px;
-  margin-bottom: 2px;
-  transition: background-color 0.3s ease;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .friend-button:hover {
-  background-color: #343434;
+  background-color: #4a4a4a;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.friend-button:active {
+  background-color: #0f0f0f;
+  transform: translateY(1px);
+}
+
+.friend-button:focus {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
 }
 </style>
