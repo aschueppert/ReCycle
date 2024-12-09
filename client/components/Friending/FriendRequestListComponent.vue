@@ -21,7 +21,7 @@ async function getFriendRequests() {
 
 async function acceptRequest(user: string) {
   try {
-    await fetchy(`/api/friend/accept/${user}`, "PUT");
+    await fetchy(`/api/friend/accept/${user}`, "PUT", { alert: true });
     friendRequests.value = friendRequests.value.filter((request) => request.from !== user);
   } catch (_) {
     return;
@@ -30,7 +30,7 @@ async function acceptRequest(user: string) {
 
 async function rejectRequest(user: string) {
   try {
-    await fetchy(`/api/friend/reject/${user}`, "PUT");
+    await fetchy(`/api/friend/reject/${user}`, "PUT", { alert: true });
     friendRequests.value = friendRequests.value.filter((request) => request.from !== user);
   } catch (_) {
     return;

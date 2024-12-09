@@ -40,8 +40,7 @@ const filterUsers = async () => {
 // Send friend request
 const sendRequest = async (username: string) => {
   try {
-    await fetchy(`/api/friend/requests/${username}`, "POST", { alert: false });
-    alert(`Friend request sent to ${username}`);
+    await fetchy(`/api/friend/requests/${username}`, "POST", { alert: true });
   } catch (error) {
     console.error("Error sending friend request:", error);
   }
