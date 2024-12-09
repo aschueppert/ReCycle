@@ -56,7 +56,7 @@ export default class ScoringConcept {
     console.log(score);
     const current_value = score.value;
     if (current_value < decrease) {
-      throw new NotAllowedError("Score too small");
+      throw new NotAllowedError("Not enough experience!");
     }
     const value = current_value - decrease;
     await this.scores.partialUpdateOne({ item }, { value });
