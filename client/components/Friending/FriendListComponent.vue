@@ -88,9 +88,8 @@ watch(
 }
 
 .no-friends {
-  font-size: 1.2rem;
-  text-align: center;
-  color: #868e96;
+  font-family: var(--base-font);
+  color: #044120;
 }
 
 .loading-text {
