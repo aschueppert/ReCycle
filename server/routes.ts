@@ -25,6 +25,8 @@ import Responses from "./responses";
 
 import { z } from "zod";
 
+const GOOGLE_MAP_API_KEY = process.env.GOOGLE_MAP_API_KEY;
+
 /**
  *
  * Web server routes for the app. Implements synchronizations between concepts.
@@ -446,6 +448,19 @@ class Routes {
   @Router.delete("/notifications")
   async deleteNotification(_id: string) {
     return await Notifications.deleteNotification(new ObjectId(_id));
+  }
+
+  @Router.get("/map")
+  async getMap(mapMode: string, userLatitude: string, userLongitude: string, destinationLatitude: string, destinationLongitude: string) {
+    let mapUrl = "";
+    if (mapMode === "view") {
+      mapUrl = `https://www.google.com/maps/embed/v1/${mapMode}?key=${GOOGLE_MAP_API_KEY}&center=${userLatitude},${userLongitude}&zoom=17`;
+    } else {
+      mapUrl = `https://www.google.com/maps/embed/v1/${mapMode}?key=${GOOGLE_MAP_API_KEY}&origin=${userLatitude},${userLongitude}&destination=${destinationLatitude},${destinationLongitude}`;
+    }
+    console.log("=====================================");
+    console.log(GOOGLE_MAP_API_KEY);
+    return { msg: "Map URL generated", mapUrl };
   }
 }
 

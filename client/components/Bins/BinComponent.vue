@@ -7,8 +7,6 @@ import { fetchy } from "../../utils/fetchy";
 const userStore = useUserStore();
 const { isLoggedIn } = storeToRefs(userStore);
 
-const GOOGLE_MAP_API_KEY = "AIzaSyDqYZHShrNYA5aDPkiOfq2I5iEOcUBUKnw";
-
 const loaded = ref(false);
 const showContributeForm = ref(false);
 const useCurrentLocation = ref(false);
@@ -31,11 +29,30 @@ const formLng = ref("");
 const formItem = ref("");
 const formError = ref("");
 
-function updateMapUrl() {
-  if (mapMode.value === "view") {
-    mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&center=${userLatitude.value},${userLongitude.value}&zoom=17`;
-  } else {
-    mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&origin=${userLatitude.value},${userLongitude.value}&destination=${destinationLatitude.value},${destinationLongitude.value}`;
+// function updateMapUrl() {
+// if (mapMode.value === "view") {
+//   mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&center=${userLatitude.value},${userLongitude.value}&zoom=17`;
+// } else {
+//   mapUrl.value = `https://www.google.com/maps/embed/v1/${mapMode.value}?key=${GOOGLE_MAP_API_KEY}&origin=${userLatitude.value},${userLongitude.value}&destination=${destinationLatitude.value},${destinationLongitude.value}`;
+// }
+// }
+
+async function updateMapUrl() {
+  try {
+    console.log("Fetching map URL...");
+    const mapResult = await fetchy(`/api/map`, "GET", {
+      query: {
+        mapMode: mapMode.value,
+        userLatitude: userLatitude.value.toString(),
+        userLongitude: userLongitude.value.toString(),
+        destinationLatitude: destinationLatitude.value.toString(),
+        destinationLongitude: destinationLongitude.value.toString(),
+      },
+    });
+    console.log("mapResult", mapResult);
+    mapUrl.value = mapResult.mapUrl;
+  } catch (_) {
+    console.log("Error fetching map URL.");
   }
 }
 
@@ -144,7 +161,7 @@ onBeforeMount(async () => {
     console.log("Fetching user location...");
     await getUserLocation();
     console.log("User location fetched successfully.");
-    updateMapUrl();
+    await updateMapUrl();
     loaded.value = true;
   } catch (error) {
     console.log("Error during setup:", error);
