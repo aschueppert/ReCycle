@@ -49,7 +49,6 @@ async function updateMapUrl() {
         destinationLongitude: destinationLongitude.value.toString(),
       },
     });
-    console.log("mapResult", mapResult);
     mapUrl.value = mapResult.mapUrl;
   } catch (_) {
     console.log("Error fetching map URL.");

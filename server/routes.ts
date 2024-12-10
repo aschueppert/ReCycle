@@ -458,8 +458,6 @@ class Routes {
     } else {
       mapUrl = `https://www.google.com/maps/embed/v1/${mapMode}?key=${GOOGLE_MAP_API_KEY}&origin=${userLatitude},${userLongitude}&destination=${destinationLatitude},${destinationLongitude}`;
     }
-    console.log("=====================================");
-    console.log(GOOGLE_MAP_API_KEY);
     return { msg: "Map URL generated", mapUrl };
   }
 }
