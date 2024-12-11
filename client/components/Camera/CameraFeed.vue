@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useUserStore } from "@/stores/user";
 import { fetchy } from "@/utils/fetchy";
 import axios from "axios";
+import { storeToRefs } from "pinia";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 
 const videoRef = ref<HTMLVideoElement | null>(null);
@@ -8,6 +10,8 @@ const canvasRef = ref<HTMLCanvasElement | null>(null);
 const classificationResult = ref<string | null>(null);
 const isClassifying = ref(false);
 let stream: MediaStream | null = null;
+
+const { isLoggedIn } = storeToRefs(useUserStore());
 
 const startVideo = async () => {
   try {
@@ -63,7 +67,9 @@ const classifyImage = async (image: File): Promise<string> => {
     const result = predictedClass.toLowerCase() === "other" ? "Trash" : "Recycle";
     try {
       const body: Record<string, string> = { type: result };
-      await fetchy(`/api/classify`, "POST", { body, alert: false });
+      if (isLoggedIn.value) {
+        await fetchy(`/api/classify`, "POST", { body, alert: true });
+      }
     } catch (error) {
       console.error("Error saving classification:", error);
     }
@@ -72,7 +78,9 @@ const classifyImage = async (image: File): Promise<string> => {
     console.error("Error classifying image: ", error);
     try {
       const body: Record<string, string> = { type: "Trash" };
-      await fetchy(`/api/classify`, "POST", { body, alert: false });
+      if (isLoggedIn.value) {
+        await fetchy(`/api/classify`, "POST", { body, alert: true });
+      }
     } catch (error) {
       console.error("Error saving classification:", error);
     }

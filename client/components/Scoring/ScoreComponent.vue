@@ -24,7 +24,7 @@ async function getScores() {
 // Trigger an action to buy a plant
 async function buyPlant() {
   try {
-    await fetchy(`/api/purchase`, "POST", {});
+    await fetchy(`/api/purchase`, "POST", { alert: true });
     await getScores(); // Refresh the scores after buying a plant
   } catch (_) {
     // Error handling
@@ -34,7 +34,7 @@ async function buyPlant() {
 // Trigger an action to classify
 async function classify() {
   try {
-    await fetchy(`/api/classify`, "POST", {});
+    await fetchy(`/api/classify`, "POST", { alert: true });
     await getScores(); // Refresh the scores after classifying
   } catch (_) {
     // Error handling

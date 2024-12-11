@@ -44,7 +44,7 @@ async function addBin(lat: number, lng: number, binType: string) {
         lng: lng,
         type: binType,
       },
-      alert: false,
+      alert: true,
     });
   } catch (_) {
     return;

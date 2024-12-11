@@ -12,6 +12,7 @@ const createPlant = async (name: string, value: number, description: string) => 
   try {
     await fetchy("/api/plants", "POST", {
       body: { name, value, description },
+      alert: true,
     });
   } catch (_) {
     return;

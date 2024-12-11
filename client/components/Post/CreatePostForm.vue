@@ -9,6 +9,7 @@ const createPost = async (content: string) => {
   try {
     await fetchy("/api/posts", "POST", {
       body: { content },
+      alert: true,
     });
   } catch (_) {
     return;

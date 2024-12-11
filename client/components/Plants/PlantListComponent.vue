@@ -42,7 +42,7 @@ async function getAllCosmetics() {
 }
 async function classify() {
   try {
-    await fetchy(`/api/classify`, "POST", { alert: false });
+    await fetchy(`/api/classify`, "POST", { alert: true });
     await getSeeds(); // Refresh the scores after classifying
     await getCosmetics();
   } catch (e) {
